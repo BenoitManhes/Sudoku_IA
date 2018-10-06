@@ -3,9 +3,16 @@ package model;
 public class Grille {
 
 	private int[][] grille;
+	private Case[][] groupeCase;
 
 	public Grille() {
 		this.grille = new int[9][9];
+		this.groupeCase = new Case[9][9];
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				groupeCase[i][j] = new Case(j,i);
+			}
+		}
 		// initialisation("nomFichier.txt"); 
 	}
 
@@ -66,4 +73,9 @@ public class Grille {
 	public int[][] getGrille() {
 		return this.grille;
 	}
+
+	public Case[][] getGroupeCase() {
+		return groupeCase;
+	}
+
 }
