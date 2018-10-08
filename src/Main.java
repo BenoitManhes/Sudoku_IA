@@ -1,8 +1,13 @@
+import java.io.File;
+import model.Backtracking;
+import model.Sudoku;
 
 public class Main {
 
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
+		File fichier = new File("blabla.txt");
+		Sudoku sudoku = new Sudoku(fichier);
+		Backtracking.solve(sudoku);
 
 	}
 
