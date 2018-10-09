@@ -3,7 +3,7 @@ package model;
 import java.io.File;
 import java.util.PriorityQueue;
 
-public class Sudoku {
+public class Sudoku extends java.util.Observable {
 
 	private Case[][] grille; //sudoku taille fixe, pas besoin de constante
 	private PriorityQueue<Case> ordreTraitement;
@@ -33,6 +33,8 @@ public class Sudoku {
 	public void actualize(){
 		//Actualise la grille en modifiant les valeurs de chaque
 		//case et les priorités en focntion des heuristiques
+		setChanged();
+		notifyObservers(grille);
 	}
 	
 	public boolean notInCol(int valeur, int j){
