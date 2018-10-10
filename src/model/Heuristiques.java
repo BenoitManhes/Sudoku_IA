@@ -15,9 +15,35 @@ public class Heuristiques {
 		caseAComparer.setPriorityDh(getNombreCasesVidesEnvirons(grille, caseAComparer));
 	}
 	
-	public static int leastConstrainingValue(Case C){
-		int v =0;	// valeur par default
-		return v;
+	public static int leastConstrainingValue(Case[][] grille, Case caseAComparer){
+		int valeur = 0;
+		int [] compteur = new int[9];
+		
+		for(int valeurPossible = 1 ; valeurPossible<=9 ; valeurPossible++) {
+			for(int casesVidesLigne = 0 ; casesVidesLigne<getCasesVidesLigne(grille, caseAComparer).size() ; casesVidesLigne++) {
+				if(getCasesVidesLigne(grille, caseAComparer).elementAt(casesVidesLigne).getValeursPossibles().contains(valeurPossible)) {
+					compteur[valeurPossible]++;
+				}
+			}
+			for(int casesVidesColonne = 0 ; casesVidesColonne<getCasesVidesColonne(grille, caseAComparer).size() ; casesVidesColonne++) {
+				if(getCasesVidesColonne(grille, caseAComparer).elementAt(casesVidesColonne).getValeursPossibles().contains(valeurPossible)) {
+					compteur[valeurPossible]++;
+				}
+			}
+			for(int casesVidesCarre = 0 ; casesVidesCarre<getCasesVidesCarre(grille, caseAComparer).size() ; casesVidesCarre++) {
+				if(getCasesVidesCarre(grille, caseAComparer).elementAt(casesVidesCarre).getValeursPossibles().contains(valeurPossible)) {
+					compteur[valeurPossible]++;
+				}
+			}
+		}
+		
+		for(int k = 0 ; k<compteur.length ; k++) {
+			if(compteur[k]>valeur) {
+				valeur = compteur[k];
+			}
+		}
+		
+		return valeur;
 	}
 	
 	public static void arcConsistency(Case[][] grille){
@@ -32,6 +58,10 @@ public class Heuristiques {
 			}
 		}
 	}
+	
+	
+	//---------------------------------------------------- Methodes Utiles --------------------------------------------------------------------------------
+	
 	
 	private static int getNombreCasesVidesEnvirons(Case[][] grille, Case caseAComparer) {
 		return getCasesVidesLigne(grille, caseAComparer).size()
