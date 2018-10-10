@@ -28,8 +28,8 @@ public class ViewSudoku implements java.util.Observer {
 
 	BufferStrategy bufferStrategy;
 
-	private int WIDTH = 800;
-	private int HEIGHT = 800;
+	private int WIDTH = 600;
+	private int HEIGHT = 600;
 	private Case[][] grille = new Case[9][9];
 
 	private final int UL = (int) (WIDTH/9.1);

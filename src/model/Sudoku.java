@@ -26,7 +26,7 @@ public class Sudoku extends java.util.Observable {
 	public int[][] load(File fichier) {
 		int[][] valeurFichier = new int[9][9];
 				// initialisation avec un fichier text
-				//a faire
+				//TODO
 		return valeurFichier;
 	}
 	
