@@ -10,7 +10,6 @@ public class Main {
 		Sudoku sudoku = new Sudoku(fichier);
 		ViewSudoku viewSudoku = new ViewSudoku();
 		sudoku.addObserver(viewSudoku);
-		
 		sudoku.actualize();
 		//Backtracking.solve(sudoku);
 

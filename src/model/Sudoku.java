@@ -21,15 +21,14 @@ public class Sudoku extends java.util.Observable {
 			for (int j = 0; j < 9; j++) {
 				this.grille[i][j] = new Case();
 				this.grille[i][j].setValeur(valeurFichier[i][j]);
-				//basicForwardChecking(i, j, this.grille[i][j].getValeur());
 			}
 		}
-		// initialisation("nomFichier.txt"); 
+		basicForwardChecking();
 	}
 
 	/** ================================================ methode de calcul =====================================================================
 	 * @throws FileNotFoundException */
-	public static int[][] load(File fichier) {
+	public int[][] load(File fichier) {
 
 		int[][] valeurFichier = new int[9][9];
 
@@ -41,13 +40,13 @@ public class Sudoku extends java.util.Observable {
 			System.out.println("Le fichier est illisible");
 			e.printStackTrace();
 		}
-		
+
 		BufferedReader lecture = new BufferedReader (lectureFile);
 
 		// Lecture de tout le fichier et remplissage de la matrice
 		int valeur = 0;
 		String ligne = null;
-		
+
 		for(int i = 0 ; i<9 ; i++) {
 			try {
 				ligne = lecture.readLine();
@@ -58,7 +57,7 @@ public class Sudoku extends java.util.Observable {
 				valeur = Character.getNumericValue(ligne.charAt(j));
 				valeurFichier[i][j] = valeur;
 			}
-		
+
 		}
 
 
@@ -70,7 +69,7 @@ public class Sudoku extends java.util.Observable {
 			System.out.println("Erreur dans la fermeture du fichier apres lecture");
 			e.printStackTrace();
 		}
-		
+
 		return valeurFichier;
 	}
 
@@ -80,33 +79,44 @@ public class Sudoku extends java.util.Observable {
 		setChanged();
 		notifyObservers(grille);
 	}
-	
+
 	public void deleteInCol(int valeur, int j){
 		for(int i=0; i<9; i++){
-			this.grille[i][j].getValeursPossibles().remove(Integer.valueOf(valeur));
+			if(this.grille[i][j].getValeursPossibles().contains(valeur)){
+				this.grille[i][j].getValeursPossibles().remove(Integer.valueOf(valeur));
+			}
 		}
 	}
-	
+
 	public void deleteInRow(int valeur, int i){
 		for(int j=0; j<9; j++){
-			this.grille[i][j].getValeursPossibles().remove(Integer.valueOf(valeur));
+			if(this.grille[i][j].getValeursPossibles().contains(valeur)){
+				this.grille[i][j].getValeursPossibles().remove(Integer.valueOf(valeur));
+			}
 		}
 	}
-	
+
 	public void deleteInSquare(int valeur, int i, int j){
 		int i_min = 3*(i/3); 
 		int j_min = 3*(j/3);
 		for(i=i_min; i<i_min+3;i++){
 			for(j=j_min; j<j_min+3; j++){
-				this.grille[i][j].getValeursPossibles().remove(Integer.valueOf(valeur));
+				if(this.grille[i][j].getValeursPossibles().contains(valeur)){
+					this.grille[i][j].getValeursPossibles().remove(Integer.valueOf(valeur));
+				}
 			}
 		}
 	}
-	
-	public void basicForwardChecking(int i, int j, int valeur){
-		deleteInCol(valeur, j);
-		deleteInRow(valeur, i);
-		deleteInSquare(valeur, i, j);
+
+	public void basicForwardChecking(){
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				deleteInCol(this.grille[i][j].getValeur(), j);
+				deleteInRow(this.grille[i][j].getValeur(), i);
+				deleteInSquare(this.grille[i][j].getValeur(), i, j);
+			}
+		}
+		
 	}
 
 }

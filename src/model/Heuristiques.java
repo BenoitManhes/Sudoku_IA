@@ -13,7 +13,7 @@ public class Heuristiques {
 		
 	}
 	
-	public void leastConstrainingValue(Case C){
+	public void leastConstrainingValue(Case[][] grille){
 		
 	}
 	
