@@ -7,14 +7,13 @@ public class Backtracking {
 		Case c = sudoku.getOrdreTraitement().poll();
 		int valeur = Heuristiques.leastConstrainingValue(c);
 		
-		boolean solution = backtrack(sudoku,c.getI(),c.getJ(),valeur);
+		//boolean solution = backtrack(sudoku,c.getI(),c.getJ(),valeur);
 	}
 	
-	public static boolean backtrack(Sudoku sudoku, Case lastCase, int lastI, int lastJ, int lastValeur) {
+	/*public static boolean backtrack(Sudoku sudoku, Case lastCase, int lastI, int lastJ, int lastValeur) {
 		//
 		Heuristiques.updateHeuristiques(sudoku);
 		Case c = sudoku.getOrdreTraitement().poll();
 		int valeur = Heuristiques.leastConstrainingValue(c);
-		
-	}
+		*/
 }

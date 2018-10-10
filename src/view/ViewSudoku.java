@@ -65,6 +65,8 @@ public class ViewSudoku implements java.util.Observer {
 		frame.setVisible(true);
 		//this will add the canvas to our frame
 		panel.add(canvas);
+		panel.isOpaque();
+		panel.repaint();
 		canvas.createBufferStrategy(2);
 		bufferStrategy = canvas.getBufferStrategy();
 		//This will make sure the canvas has focus, so that it can take input from mouse/keyboard
