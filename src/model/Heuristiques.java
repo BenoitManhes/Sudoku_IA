@@ -15,8 +15,10 @@ public class Heuristiques {
 		caseAComparer.setPriorityDh(getNombreCasesVidesEnvirons(grille, caseAComparer));
 	}
 	
-	public static int leastConstrainingValue(Case[][] grille, Case caseAComparer){
-		int valeur = 0;
+	public static int[] leastConstrainingValue(Case[][] grille, Case caseAComparer){
+		
+		int [] listeValeurs = new int[9];
+		for(int i = 1 ; i<=9 ; i++) listeValeurs[i] = i;
 		int [] compteur = new int[9];
 		
 		for(int valeurPossible = 1 ; valeurPossible<=9 ; valeurPossible++) {
@@ -37,13 +39,18 @@ public class Heuristiques {
 			}
 		}
 		
+		int valeur = 0;
 		for(int k = 0 ; k<compteur.length ; k++) {
-			if(compteur[k]>valeur) {
-				valeur = compteur[k];
+			for(int t = k ; t<compteur.length ; t++) {
+				if(compteur[t]>compteur[k]) {
+					valeur = listeValeurs[t];
+					listeValeurs[t]=listeValeurs[k];
+					listeValeurs[k] = valeur;
+				}
 			}
 		}
 		
-		return valeur;
+		return listeValeurs;
 	}
 	
 	public static void arcConsistency(Case[][] grille){
