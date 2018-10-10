@@ -10,6 +10,7 @@ import java.util.PriorityQueue;
 public class Sudoku extends java.util.Observable {
 
 	private Case[][] grille; //sudoku taille fixe, pas besoin de constante
+
 	private PriorityQueue<Case> ordreTraitement;
 
 	public Sudoku(File fichier) {
@@ -106,6 +107,14 @@ public class Sudoku extends java.util.Observable {
 		deleteInCol(valeur, j);
 		deleteInRow(valeur, i);
 		deleteInSquare(valeur, i, j);
+	}
+	
+	public Case[][] getGrille() {
+		return grille;
+	}
+
+	public PriorityQueue<Case> getOrdreTraitement() {
+		return ordreTraitement;
 	}
 
 }

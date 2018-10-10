@@ -7,6 +7,8 @@ public class Case {
 	private ArrayList<Integer> valeursPossibles;
 	private int priorityMrv;
 	private int priorityDh;
+	private int i;	// ligne
+	private int j;	// colonne
 	
 	public Case() {
 		this.valeur = 0;
@@ -43,6 +45,22 @@ public class Case {
 	
 	public ArrayList<Integer> getValeursPossibles(){
 		return valeursPossibles;
+	}
+
+	public int getI() {
+		return i;
+	}
+
+	public void setI(int i) {
+		this.i = i;
+	}
+
+	public int getJ() {
+		return j;
+	}
+
+	public void setJ(int j) {
+		this.j = j;
 	}
 
 }
