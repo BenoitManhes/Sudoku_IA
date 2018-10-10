@@ -11,8 +11,8 @@ public class Case {
 	public Case() {
 		this.valeur = 0;
 		this.valeursPossibles = new ArrayList<Integer>();
-		for(int i=1; i<=9; i++){
-			this.valeursPossibles.add(i);
+		for(int k=1; k<=9; k++){
+			this.valeursPossibles.add(k);
 		}
 	}
 
@@ -22,7 +22,7 @@ public class Case {
 
 	public void setValeur(int valeur) {
 		this.valeur = valeur;
-		this.valeursPossibles.remove(valeur);
+		this.valeursPossibles.remove(Integer.valueOf(valeur)); //enleve la valeur actuelle des case possible
 	}
 
 	public int getPriorityMrv() {
@@ -41,4 +41,8 @@ public class Case {
 		this.priorityDh = priorityDh;
 	}
 	
+	public ArrayList<Integer> getValeursPossibles(){
+		return valeursPossibles;
+	}
+
 }

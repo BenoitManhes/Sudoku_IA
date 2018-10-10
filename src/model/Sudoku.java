@@ -17,6 +17,7 @@ public class Sudoku extends java.util.Observable {
 			for (int j = 0; j < 9; j++) {
 				this.grille[i][j] = new Case();
 				this.grille[i][j].setValeur(valeurFichier[i][j]);
+				basicForwardChecking(i, j, this.grille[i][j].getValeur());
 			}
 		}
 		// initialisation("nomFichier.txt"); 
@@ -37,32 +38,32 @@ public class Sudoku extends java.util.Observable {
 		notifyObservers(grille);
 	}
 	
-	public boolean notInCol(int valeur, int j){
+	public void deleteInCol(int valeur, int j){
 		for(int i=0; i<9; i++){
-			if(this.grille[i][j].getValeur() == valeur)
-				return false;
+			this.grille[i][j].getValeursPossibles().remove(Integer.valueOf(valeur));
 		}
-		return true;
 	}
 	
-	public boolean notInRow(int valeur, int i){
+	public void deleteInRow(int valeur, int i){
 		for(int j=0; j<9; j++){
-			if(this.grille[i][j].getValeur() == valeur)
-				return false;
+			this.grille[i][j].getValeursPossibles().remove(Integer.valueOf(valeur));
 		}
-		return true;
 	}
 	
-	public boolean notInSquare(int valeur, int i, int j){
+	public void deleteInSquare(int valeur, int i, int j){
 		int i_min = 3*(i/3); 
 		int j_min = 3*(j/3);
 		for(i=i_min; i<i_min+3;i++){
 			for(j=j_min; j<j_min+3; j++){
-				if(this.grille[i][j].getValeur() == valeur)
-					return false;
+				this.grille[i][j].getValeursPossibles().remove(Integer.valueOf(valeur));
 			}
 		}
-		return true;
+	}
+	
+	public void basicForwardChecking(int i, int j, int valeur){
+		deleteInCol(valeur, j);
+		deleteInRow(valeur, i);
+		deleteInSquare(valeur, i, j);
 	}
 
 }
