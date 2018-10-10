@@ -29,7 +29,7 @@ public class Sudoku extends java.util.Observable {
 
 	/** ================================================ methode de calcul =====================================================================
 	 * @throws FileNotFoundException */
-	public static int[][] load(File fichier) {
+	public int[][] load(File fichier) {
 
 		int[][] valeurFichier = new int[9][9];
 
@@ -60,7 +60,6 @@ public class Sudoku extends java.util.Observable {
 			}
 		
 		}
-
 
 		// Liberation des ressources
 		try {
