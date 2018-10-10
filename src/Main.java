@@ -6,7 +6,7 @@ import view.ViewSudoku;
 public class Main {
 
 	public static void main(String[] args) {
-		File fichier = new File("blabla.txt");
+		File fichier = new File("exemple1.txt");
 		Sudoku sudoku = new Sudoku(fichier);
 		ViewSudoku viewSudoku = new ViewSudoku();
 		sudoku.addObserver(viewSudoku);

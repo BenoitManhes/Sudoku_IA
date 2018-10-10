@@ -21,7 +21,7 @@ public class Sudoku extends java.util.Observable {
 			for (int j = 0; j < 9; j++) {
 				this.grille[i][j] = new Case();
 				this.grille[i][j].setValeur(valeurFichier[i][j]);
-				basicForwardChecking(i, j, this.grille[i][j].getValeur());
+				//basicForwardChecking(i, j, this.grille[i][j].getValeur());
 			}
 		}
 		// initialisation("nomFichier.txt"); 
