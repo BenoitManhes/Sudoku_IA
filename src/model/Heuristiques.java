@@ -13,14 +13,11 @@ public class Heuristiques {
 		
 	}
 	
-	public static int leastConstrainingValue(Case C){
-		int v =0;	// valeur par default
-		return v;
+	public static void leastConstrainingValue(Case[][] grille, int i, int j){
+		// maj de la priorityQueue
 	}
 	
-	public static void arcConsistency(Case[][] grille){
-		
-	}
+	
 	
 	public static void updateHeuristiques(Sudoku sudoku) {
 		// mise a jour des heuristiques de toutes les cases non nulles
