@@ -20,11 +20,12 @@ public class Sudoku extends java.util.Observable {
 		int[][] valeurFichier = this.load(fichier);
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
-				this.grille[i][j] = new Case();
+				this.grille[i][j] = new Case(i,j);
 				this.grille[i][j].setValeur(valeurFichier[i][j]);
 			}
 		}
 		basicForwardChecking();
+		initPriorityQueue();
 	}
 
 	/** ================================================ methode de calcul =====================================================================
@@ -130,6 +131,14 @@ public class Sudoku extends java.util.Observable {
 			}
 		}
 		return finish;
+	}
+	
+	public void initPriorityQueue() {
+		for (Case[] cases : this.grille) {
+			for (Case cas : cases) {
+				if(cas.getValeur() == 0) this.ordreTraitement.add(cas);
+			}
+		}
 	}
 
 	public Case[][] getGrille() {

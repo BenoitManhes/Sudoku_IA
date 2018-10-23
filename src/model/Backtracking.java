@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Vector;
 
@@ -18,7 +19,6 @@ public class Backtracking {
 		Heuristiques.updateHeuristiques(sudoku);
 
 		boolean solutionTrouve = false;
-		System.out.println(caseNontestes.size());
 		for (int k = 0; k < caseNontestes.size(); k++) {
 
 
@@ -26,15 +26,19 @@ public class Backtracking {
 			Case c = pollCaseAt(caseNontestes, k);
 			int i = c.getI();
 			int j = c.getJ();
+			System.out.println("Case en test : "+i+","+j);
 
 			// a changer pour adapter avec une ArrayList et la methode qui renvoie les valeur possibles
-			PriorityQueue<Integer> valeurNonTestes = new PriorityQueue<>(c.getValeurNonTestes());
+			ArrayList<Integer> valeurNonTestes = new ArrayList<Integer>(c.getValeursPossibles());
 
 			while(!valeurNonTestes.isEmpty() && !solutionTrouve) {
-				// choix de la valeur a teste selon leurs heuristiques
-				int valeur = c.getValeurNonTestes().poll();
+				// choix de la valeur a teste 
+				int valeur = valeurNonTestes.get(0);
+				valeurNonTestes.remove(0);
+				// affectation de la valeur
 				sudoku.getGrille()[i][j].setValeur(valeur);
-
+				sudoku.actualize();
+				try {Thread.sleep(500);} catch (InterruptedException e) {e.printStackTrace();}
 				// mise a jour des valeurs possibles pour les cases concernees
 				sudoku.basicForwardChecking();
 				sudoku.arcConsistency();

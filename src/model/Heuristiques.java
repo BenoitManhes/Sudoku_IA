@@ -59,7 +59,8 @@ public class Heuristiques {
 		// mise a jour des heuristiques de toutes les cases non nulles
 		for (int i = 0; i < sudoku.getGrille().length; i++) {
 			for (int j = 0; j < sudoku.getGrille()[i].length; j++) {
-				// calcul des heuristiques
+				minimalRemainingValue(sudoku.getGrille()[i][j]);
+				degreeHeuristic(sudoku.getGrille(), sudoku.getGrille()[i][j]);
 			}
 		}
 	}
