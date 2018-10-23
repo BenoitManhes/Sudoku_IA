@@ -8,8 +8,8 @@ import view.*;
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-		URL url = Main.class.getResource("/resources/exemple1.txt");
-		File fichier = new File(url.toString().substring(5));
+		//URL url = Main.class.getResource("/resources/exemple1.txt");
+		File fichier = new File("D:\\Sudoku\\exemple1.txt");
 		Sudoku sudoku = new Sudoku(fichier);
 		ViewSudoku viewSudoku = new ViewSudoku();
 		sudoku.addObserver(viewSudoku);
@@ -17,6 +17,7 @@ public class Main {
 		sudoku.actualize();
 		Backtracking.solve(sudoku);
 
+		
 	}
 
 }

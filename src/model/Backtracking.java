@@ -30,19 +30,18 @@ public class Backtracking {
 
 			// a changer pour adapter avec une ArrayList et la methode qui renvoie les valeur possibles
 			ArrayList<Integer> valeurNonTestes = new ArrayList<Integer>(c.getValeursPossibles());
-			
-
+			testValPossible(c);
 			while(!valeurNonTestes.isEmpty() && !solutionTrouve) {
-				int valeurCase = c.getValeur();
-				sudoku.putValeur(i, j, 0);
-				sudoku.addPossibleValue(i, j, valeurCase);
-				sudoku.basicForwardChecking();
+				// ancienne valeur de c
+				int exValeurCase = c.getValeur();
 				// choix de la valeur a teste 
 				int valeur = valeurNonTestes.get(0);
 				valeurNonTestes.remove(0);
+				System.out.println("("+c.getI()+","+c.getJ()+") valeur choisie :"+valeur);
 				// affectation de la valeur
 				sudoku.putValeur(i, j, valeur);
 				// mise a jour des valeurs possibles pour les cases concernees
+				if(exValeurCase!=0) sudoku.addPossibleValue(i, j, exValeurCase);
 				sudoku.basicForwardChecking();
 				sudoku.arcConsistency();
 
@@ -50,7 +49,7 @@ public class Backtracking {
 					if(!sudoku.bloquer()) {
 						solutionTrouve = backtrack(sudoku);
 					}else{
-						System.out.println("Bloquage en :"+i+","+j);
+						//System.out.println("Bloquage en :"+i+","+j);
 					}
 				}else {
 					solutionTrouve = true;
@@ -62,7 +61,7 @@ public class Backtracking {
 				sudoku.getOrdreTraitement().add(c);
 				int valeurCase = c.getValeur();
 				sudoku.putValeur(i, j, 0);
-				sudoku.addPossibleValue(i, j, valeurCase);
+				if(valeurCase!=0) sudoku.addPossibleValue(i, j, valeurCase);
 				sudoku.basicForwardChecking();
 			}
 		}
@@ -81,5 +80,13 @@ public class Backtracking {
 			queue.add(case1);
 		}
 		return caseVoule;
+	}
+	
+	public static void testValPossible(Case c) {
+		String str ="Case ("+c.getI()+","+c.getJ()+") val possible : ";
+		for (Integer i : c.getValeursPossibles()) {
+			str+=i+", ";
+		}
+		System.out.println(str);
 	}
 }
