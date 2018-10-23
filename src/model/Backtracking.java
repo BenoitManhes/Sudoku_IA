@@ -9,21 +9,21 @@ public class Backtracking {
 		// actualisation des valeurs possibles pour chaque cases
 		sudoku.actualize(); 
 
-		backtrack(sudoku, sudoku.getOrdreTraitement());
+		backtrack(sudoku);
 		//sudoku.actualize();
 	}
 
-	public static boolean backtrack(Sudoku sudoku , PriorityQueue<Case> caseNontestes) {
+	public static boolean backtrack(Sudoku sudoku) {
 
 		// mise a jour des heuristiques pour chaque cases
 		Heuristiques.updateHeuristiques(sudoku);
 
 		boolean solutionTrouve = false;
-		for (int k = 0; k < caseNontestes.size(); k++) {
+		for (int k = 0; k < sudoku.getOrdreTraitement().size(); k++) {
 			System.out.println(k);
 
 			// choix de la case a traiter selon leurs heuristiques
-			Case c = pollCaseAt(caseNontestes, k);
+			Case c = pollCaseAt(sudoku.getOrdreTraitement(), k);
 			int i = c.getI();
 			int j = c.getJ();
 			//System.out.println("Case en test : "+i+","+j);
@@ -44,10 +44,9 @@ public class Backtracking {
 
 				if(!sudoku.finish()) {
 					if(!sudoku.bloquer()) {
-						solutionTrouve = backtrack(sudoku,caseNontestes);
-					}else {
-						sudoku.putValeur(i, j, 0);
-						sudoku.basicForwardChecking();
+						solutionTrouve = backtrack(sudoku);
+					}else{
+						System.out.println("Bloquage en :"+i+","+j);
 					}
 				}else {
 					solutionTrouve = true;
@@ -56,7 +55,7 @@ public class Backtracking {
 
 			}
 			if(!solutionTrouve) {
-				caseNontestes.add(c);
+				sudoku.getOrdreTraitement().add(c);
 				sudoku.putValeur(i, j, 0);
 				sudoku.basicForwardChecking();
 			}
