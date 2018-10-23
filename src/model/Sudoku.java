@@ -60,7 +60,6 @@ public class Sudoku extends java.util.Observable {
 
 		}
 
-
 		// Liberation des ressources
 		try {
 			lectureFile.close();
