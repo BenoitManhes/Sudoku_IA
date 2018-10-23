@@ -53,9 +53,7 @@ public class Heuristiques {
 		return listeValeurs;
 	}
 	
-	public static void arcConsistency(Case[][] grille){
-		
-	}
+	
 	
 	public static void updateHeuristiques(Sudoku sudoku) {
 		// mise a jour des heuristiques de toutes les cases non nulles

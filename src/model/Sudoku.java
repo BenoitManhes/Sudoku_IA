@@ -42,13 +42,13 @@ public class Sudoku extends java.util.Observable {
 			System.out.println("Le fichier est illisible");
 			e.printStackTrace();
 		}
-		
+
 		BufferedReader lecture = new BufferedReader (lectureFile);
 
 		// Lecture de tout le fichier et remplissage de la matrice
 		int valeur = 0;
 		String ligne = null;
-		
+
 		for(int i = 0 ; i<9 ; i++) {
 			try {
 				ligne = lecture.readLine();
@@ -59,7 +59,7 @@ public class Sudoku extends java.util.Observable {
 				valeur = Character.getNumericValue(ligne.charAt(j));
 				valeurFichier[i][j] = valeur;
 			}
-		
+
 		}
 
 		// Liberation des ressources
@@ -70,29 +70,28 @@ public class Sudoku extends java.util.Observable {
 			System.out.println("Erreur dans la fermeture du fichier apres lecture");
 			e.printStackTrace();
 		}
-		
+
 		return valeurFichier;
 	}
 
 	public void actualize(){
-		//Actualise la grille en modifiant les valeurs de chaque
-		//case et les priorit�s en focntion des heuristiques
+		// initialisation valeur possibles pour chaque case
 		setChanged();
 		notifyObservers(grille);
 	}
-	
+
 	public void deleteInCol(int valeur, int j){
 		for(int i=0; i<9; i++){
 			this.grille[i][j].getValeursPossibles().remove(Integer.valueOf(valeur));
 		}
 	}
-	
+
 	public void deleteInRow(int valeur, int i){
 		for(int j=0; j<9; j++){
 			this.grille[i][j].getValeursPossibles().remove(Integer.valueOf(valeur));
 		}
 	}
-	
+
 	public void deleteInSquare(int valeur, int i, int j){
 		int i_min = 3*(i/3); 
 		int j_min = 3*(j/3);
@@ -102,13 +101,22 @@ public class Sudoku extends java.util.Observable {
 			}
 		}
 	}
-	
+
 	public void basicForwardChecking(int i, int j, int valeur){
 		deleteInCol(valeur, j);
 		deleteInRow(valeur, i);
 		deleteInSquare(valeur, i, j);
 	}
+
+	public void arcConsistency(){
+
+	}
 	
+	public boolean blocked() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 	public Case[][] getGrille() {
 		return grille;
 	}
@@ -116,5 +124,9 @@ public class Sudoku extends java.util.Observable {
 	public PriorityQueue<Case> getOrdreTraitement() {
 		return ordreTraitement;
 	}
+
+	
+
+
 
 }
