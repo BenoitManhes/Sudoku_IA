@@ -27,7 +27,8 @@ public class Case {
 
 	public void setValeur(int valeur) {
 		this.valeur = valeur;
-		this.valeursPossibles.remove(Integer.valueOf(valeur)); //enleve la valeur actuelle des case possible
+		if(valeur != 0)
+			this.valeursPossibles.clear(); //enleve la valeur actuelle des case possible
 	}
 
 	public int getPriorityMrv() {

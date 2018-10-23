@@ -38,8 +38,8 @@ public class ViewSudoku implements java.util.Observer {
 
 	BufferStrategy bufferStrategy;
 
-	private int WIDTH = 600;
-	private int HEIGHT = 600;
+	private int WIDTH = 700;
+	private int HEIGHT = 700;
 	private Case[][] grille = new Case[9][9];
 
 	private final int UL = (int) (WIDTH/9.1);
@@ -56,7 +56,7 @@ public class ViewSudoku implements java.util.Observer {
 		panel.setLayout(null);
 
 		canvas = new Canvas();
-		canvas.setBounds(0, tailleMenu, WIDTH, HEIGHT-tailleMenu);
+		canvas.setBounds(0, tailleMenu+2, WIDTH, HEIGHT-tailleMenu);
 		canvas.setIgnoreRepaint(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
@@ -127,7 +127,7 @@ public class ViewSudoku implements java.util.Observer {
 
 		//Rechercher dans les fichiers du workspace avec condition de finir par .txt
 		String workingDir = System.getProperty("user.dir");
-		File rep = new File(workingDir);
+		File rep = new File(workingDir+"/bin/resources");
 		File[] fichiersTexte = rep.listFiles(new FilenameFilter(){
 		  public boolean accept(File dir, String name) {
 		    return name.endsWith(".txt");
