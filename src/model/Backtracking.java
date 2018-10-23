@@ -33,6 +33,10 @@ public class Backtracking {
 			
 
 			while(!valeurNonTestes.isEmpty() && !solutionTrouve) {
+				int valeurCase = c.getValeur();
+				sudoku.putValeur(i, j, 0);
+				sudoku.addPossibleValue(i, j, valeurCase);
+				sudoku.basicForwardChecking();
 				// choix de la valeur a teste 
 				int valeur = valeurNonTestes.get(0);
 				valeurNonTestes.remove(0);
@@ -56,7 +60,9 @@ public class Backtracking {
 			}
 			if(!solutionTrouve) {
 				sudoku.getOrdreTraitement().add(c);
+				int valeurCase = c.getValeur();
 				sudoku.putValeur(i, j, 0);
+				sudoku.addPossibleValue(i, j, valeurCase);
 				sudoku.basicForwardChecking();
 			}
 		}
