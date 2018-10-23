@@ -113,6 +113,34 @@ public class Sudoku extends java.util.Observable {
 			}
 		}
 	}
+	
+	public void addPossibleValueInCol(int valeur, int j){
+		for(int i=0; i<9; i++){
+			if(!this.grille[i][j].getValeursPossibles().contains(valeur)){
+				this.grille[i][j].getValeursPossibles().add(valeur);
+			}
+		}
+	}
+
+	public void addPossibleValueInRow(int valeur, int i){
+		for(int j=0; j<9; j++){
+			if(!this.grille[i][j].getValeursPossibles().contains(valeur)){
+				this.grille[i][j].getValeursPossibles().add(valeur);
+			}
+		}
+	}
+
+	public void addPossibleValueInSquare(int valeur, int i, int j){
+		int i_min = 3*(i/3); 
+		int j_min = 3*(j/3);
+		for(i=i_min; i<i_min+3;i++){
+			for(j=j_min; j<j_min+3; j++){
+				if(!this.grille[i][j].getValeursPossibles().contains(valeur)){
+					this.grille[i][j].getValeursPossibles().add(valeur);
+				}
+			}
+		}
+	}
 
 	public void basicForwardChecking(){
 		for (int i = 0; i < 9; i++) {
@@ -122,7 +150,12 @@ public class Sudoku extends java.util.Observable {
 				deleteInSquare(this.grille[i][j].getValeur(), i, j);
 			}
 		}
-		
+	}
+	
+	public void addPossibleValue(int i, int j, int val){
+				addPossibleValueInCol(val, j);
+				addPossibleValueInRow(val, i);
+				addPossibleValueInSquare(val, i, j);
 	}
 
 	public void arcConsistency(){
