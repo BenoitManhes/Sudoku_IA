@@ -9,7 +9,7 @@ public class Backtracking {
 		sudoku.actualize(); 
 
 		backtrack(sudoku, sudoku.getOrdreTraitement());
-
+		//sudoku.actualize();
 	}
 
 	public static boolean backtrack(Sudoku sudoku , PriorityQueue<Case> caseNontestes) {
@@ -18,7 +18,7 @@ public class Backtracking {
 		Heuristiques.updateHeuristiques(sudoku);
 
 		boolean solutionTrouve = false;
-
+		System.out.println(caseNontestes.size());
 		for (int k = 0; k < caseNontestes.size(); k++) {
 
 

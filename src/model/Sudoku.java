@@ -74,7 +74,7 @@ public class Sudoku extends java.util.Observable {
 	}
 
 	public void actualize(){
-		// initialisation valeur possibles pour chaque case
+		// actualisation de la grille au pres de la vue
 		setChanged();
 		notifyObservers(grille);
 	}
@@ -123,8 +123,13 @@ public class Sudoku extends java.util.Observable {
 	}
 	
 	public boolean blocked() {
-		// TODO Auto-generated method stub
-		return false;
+		boolean finish = true;
+		for (Case[] cases : grille) {
+			for (Case cas : cases) {
+				if(cas.getValeur() == 0) finish = false;
+			}
+		}
+		return finish;
 	}
 
 	public Case[][] getGrille() {
