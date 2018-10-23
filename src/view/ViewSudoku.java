@@ -2,6 +2,7 @@ package view;
 import model.*;
 
 import java.awt.Canvas;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -33,6 +34,7 @@ public class ViewSudoku implements java.util.Observer {
 	private int WIDTH = 700;
 	private int HEIGHT = 700;
 	private Case[][] grille = new Case[9][9];
+	private Case[][] grilleInitiale = new Case[9][9];
 
 	private final int UL = (int) (WIDTH/9.1);
 
@@ -64,7 +66,6 @@ public class ViewSudoku implements java.util.Observer {
 		//This will make sure the canvas has focus, so that it can take input from mouse/keyboard
 		canvas.requestFocus();
 		canvas.setBackground(java.awt.Color.WHITE);
-
 		this.render();
 	}
 	void render() {
@@ -83,11 +84,19 @@ public class ViewSudoku implements java.util.Observer {
 		}
 
 		try {
-			g.setFont(new Font("Tahoma",Font.BOLD, UL/2));
-
 			for (int i = 0; i < grille.length; i++) {
 				for (int j = 0; j < grille.length; j++) {
-					if(grille[j][i].getValeur() != 0) g.drawString(grille[j][i].getValeur()+"", i*UL+UL/3, j*UL+UL*3/4);
+					if(grille[j][i].getValeur() != 0) {
+						if(Sudoku.isInValeursInitiale(grille[j][i])) {
+							g.setFont(new Font("Tahoma",Font.BOLD, UL/2));
+							g.setColor(Color.BLACK);
+						}
+						else {
+							g.setFont(new Font("Tahoma",Font.PLAIN, UL/2));
+							g.setColor(Color.GRAY);
+						}
+						g.drawString(grille[j][i].getValeur()+"", i*UL+UL/3, j*UL+UL*3/4);
+					}
 				}
 			}
 		}catch (Exception e) {
@@ -102,6 +111,10 @@ public class ViewSudoku implements java.util.Observer {
 		this.render();
 		System.out.println("update");
 	}
+	
+	/*public void init(Case[][] grilleInit) {
+		this.grilleInitiale = new CAs;
+	}*/
 
 	public void addController(ActionListener controller){
 
@@ -147,5 +160,6 @@ public class ViewSudoku implements java.util.Observer {
 
 		return menuBar;
 	}
+
 
 }
