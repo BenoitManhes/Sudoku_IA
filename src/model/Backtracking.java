@@ -36,7 +36,7 @@ public class Backtracking {
 				sudoku.getGrille()[i][j].setValeur(valeur);
 
 				// mise a jour des valeurs possibles pour les cases concernees
-				sudoku.basicForwardChecking(i, j, valeur);
+				sudoku.basicForwardChecking();
 				sudoku.arcConsistency();
 
 				if(!sudoku.blocked()) {
