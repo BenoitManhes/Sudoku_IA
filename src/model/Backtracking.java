@@ -20,39 +20,48 @@ public class Backtracking {
 
 		boolean solutionTrouve = false;
 		for (int k = 0; k < caseNontestes.size(); k++) {
-
+			System.out.println(k);
 
 			// choix de la case a traiter selon leurs heuristiques
 			Case c = pollCaseAt(caseNontestes, k);
 			int i = c.getI();
 			int j = c.getJ();
-			System.out.println("Case en test : "+i+","+j);
+			//System.out.println("Case en test : "+i+","+j);
 
 			// a changer pour adapter avec une ArrayList et la methode qui renvoie les valeur possibles
 			ArrayList<Integer> valeurNonTestes = new ArrayList<Integer>(c.getValeursPossibles());
+			
 
 			while(!valeurNonTestes.isEmpty() && !solutionTrouve) {
 				// choix de la valeur a teste 
 				int valeur = valeurNonTestes.get(0);
 				valeurNonTestes.remove(0);
 				// affectation de la valeur
-				sudoku.getGrille()[i][j].setValeur(valeur);
-				sudoku.actualize();
-				try {Thread.sleep(500);} catch (InterruptedException e) {e.printStackTrace();}
+				sudoku.putValeur(i, j, valeur);
 				// mise a jour des valeurs possibles pour les cases concernees
 				sudoku.basicForwardChecking();
 				sudoku.arcConsistency();
 
-				if(!sudoku.blocked()) {
-					solutionTrouve = backtrack(sudoku,caseNontestes);					
+				if(!sudoku.finish()) {
+					if(!sudoku.bloquer()) {
+						solutionTrouve = backtrack(sudoku,caseNontestes);
+					}else {
+						sudoku.putValeur(i, j, 0);
+						sudoku.basicForwardChecking();
+					}
 				}else {
 					solutionTrouve = true;
+					System.out.println("solution trouve !!!!!!!!!!!");
 				}
 
 			}
-			caseNontestes.add(c);
+			if(!solutionTrouve) {
+				caseNontestes.add(c);
+				sudoku.putValeur(i, j, 0);
+				sudoku.basicForwardChecking();
+			}
 		}
-		
+
 		return solutionTrouve;
 
 	}

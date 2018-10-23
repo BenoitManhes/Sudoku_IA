@@ -79,6 +79,12 @@ public class Sudoku extends java.util.Observable {
 		setChanged();
 		notifyObservers(grille);
 	}
+	
+	public void putValeur(int i, int j, int val) {
+		this.getGrille()[i][j].setValeur(val);
+		this.actualize();
+		try {Thread.sleep(10);} catch (InterruptedException e) {e.printStackTrace();}
+	}
 
 	public void deleteInCol(int valeur, int j){
 		for(int i=0; i<9; i++){
@@ -123,7 +129,7 @@ public class Sudoku extends java.util.Observable {
 
 	}
 	
-	public boolean blocked() {
+	public boolean finish() {
 		boolean finish = true;
 		for (Case[] cases : grille) {
 			for (Case cas : cases) {
@@ -131,6 +137,16 @@ public class Sudoku extends java.util.Observable {
 			}
 		}
 		return finish;
+	}
+	
+	public boolean bloquer() {
+		boolean bloc = false;
+		for (Case[] cases : grille) {
+			for (Case cas : cases) {
+				if(cas.getValeur() == 0 && cas.getValeursPossibles().isEmpty()) bloc = true;
+			}
+		}
+		return bloc;
 	}
 	
 	public void initPriorityQueue() {
