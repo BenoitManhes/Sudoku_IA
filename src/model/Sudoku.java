@@ -130,7 +130,7 @@ public class Sudoku extends java.util.Observable {
 			}
 		}
 	}
-	
+
 	public void addPossibleValueInCol(int valeur, int j){
 		for(int i=0; i<9; i++){
 			if(!this.grille[i][j].getValeursPossibles().contains(valeur)&&this.grille[i][j].getValeur()==0){
@@ -162,23 +162,96 @@ public class Sudoku extends java.util.Observable {
 	public void basicForwardChecking(){
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
-				deleteInCol(this.grille[i][j].getValeur(), j);
-				deleteInRow(this.grille[i][j].getValeur(), i);
-				deleteInSquare(this.grille[i][j].getValeur(), i, j);
+				deletePossibleValue(this.grille[i][j].getValeur(), i, j);
+			}
+		}
+	}
+
+	public void addPossibleValue(int i, int j, int val){
+		addPossibleValueInCol(val, j);
+		addPossibleValueInRow(val, i);
+		addPossibleValueInSquare(val, i, j);
+	}
+
+	public void deletePossibleValue(int val, int i, int j) {
+		deleteInCol(val,j);
+		deleteInRow(val,i);
+		deleteInSquare(val,i,j);
+	}
+
+	public void arcConsistency(){
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				if(isDeletePermitted(this.grille[i][j].getValeur(), i, j)) {
+					deletePossibleValue(this.grille[i][j].getValeur(), i, j);
+				}
 			}
 		}
 	}
 	
-	public void addPossibleValue(int i, int j, int val){
-				addPossibleValueInCol(val, j);
-				addPossibleValueInRow(val, i);
-				addPossibleValueInSquare(val, i, j);
-	}
-
-	public void arcConsistency(){
-
+	public boolean isDeletePermitted(int valeur, int i, int j) {
+		if(isDeletePossibleValueInRow(valeur, i) == false 
+				|| isDeletePossibleValueInCol(valeur, j) == false
+				|| isDeletePossibleValueInSquare(valeur, i,j) == false) {
+			return false;
+		}
+		else {
+			return true;
+		}
 	}
 	
+	public boolean isDeletePossibleValueInRow(int valeur, int i) {
+		int compt = 0;
+		for(int j = 0 ; j<9 ; j++) {
+			if(this.grille[i][j].getValeursPossibles().isEmpty()) {
+				return false;
+			}
+			else if(this.grille[i][j].getValeursPossibles().size() == 1) {
+				if(this.grille[i][j].getValeursPossibles().get(0) == valeur) {
+					compt++;
+					if(compt>1) return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public boolean isDeletePossibleValueInCol(int valeur, int j) {
+		int compt = 0;
+		for(int i = 0 ; i<9 ; i++) {
+			if(this.grille[i][j].getValeursPossibles().isEmpty()) {
+				return false;
+			}
+			else if(this.grille[i][j].getValeursPossibles().size() == 1) {
+				if(this.grille[i][j].getValeursPossibles().get(0) == valeur) {
+					compt++;
+					if(compt>1) return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	public boolean isDeletePossibleValueInSquare(int valeur, int i, int j) {
+		int compt = 0;
+		int i_min = 3*(i/3); 
+		int j_min = 3*(j/3);
+		for(i=i_min; i<i_min+3; i++){
+			for(j=j_min; j<j_min+3; j++){
+				if(this.grille[i][j].getValeursPossibles().isEmpty()) {
+					return false;
+				}
+				else if(this.grille[i][j].getValeursPossibles().size() == 1) {
+					if(this.grille[i][j].getValeursPossibles().get(0) == valeur) {
+						compt++;
+						if(compt>1) return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
 	public boolean finish() {
 		boolean finish = true;
 		for (Case[] cases : grille) {
@@ -188,7 +261,7 @@ public class Sudoku extends java.util.Observable {
 		}
 		return finish;
 	}
-	
+
 	public boolean bloquer() {
 		boolean bloc = false;
 		for (Case[] cases : grille) {
@@ -198,7 +271,7 @@ public class Sudoku extends java.util.Observable {
 		}
 		return bloc;
 	}
-	
+
 	public void initPriorityQueue() {
 		for (Case[] cases : this.grille) {
 			for (Case cas : cases) {
@@ -221,6 +294,7 @@ public class Sudoku extends java.util.Observable {
 
 
 	
+
 
 
 
