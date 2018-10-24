@@ -83,8 +83,8 @@ public class Backtracking {
 		Case c = caseNoeud.poll();
 		int i = c.getI();
 		int j = c.getJ();
-		int currentValue = 0;
-		//System.out.println("case ("+i+","+j+") liste value"+c.getValeursPossibles());
+		int currentValue = 0;		
+
 		ArrayList<Integer> copyValPossible = new ArrayList<Integer>(c.getValeursPossibles());
 		for(int value : copyValPossible){
 			currentValue = value;
@@ -94,18 +94,16 @@ public class Backtracking {
 			if(backtrack2(sudoku, caseNoeud))
 			{	
 				return true;
-			}
+			}else{
 			sudoku.putValeur(i, j, 0);
 			sudoku.addPossibleValue(i, j, currentValue);
-			sudoku.basicForwardChecking();	
+			sudoku.basicForwardChecking();
+			}
 		}
 		System.out.println("false");
 		caseNoeud.add(c);
-		sudoku.putValeur(i, j, 0);
-		sudoku.addPossibleValue(i, j, currentValue);
-		sudoku.basicForwardChecking();
 		return false;
-	}
+		}
 
 	public static Case pollCaseAt(PriorityQueue<Case> queue, int i) {
 		Vector<Case> v = new Vector<>();

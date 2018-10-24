@@ -116,7 +116,7 @@ public class Sudoku extends java.util.Observable {
 	
 	public void addPossibleValueInCol(int valeur, int j){
 		for(int i=0; i<9; i++){
-			if(!this.grille[i][j].getValeursPossibles().contains(valeur)){
+			if(!this.grille[i][j].getValeursPossibles().contains(valeur)&&this.grille[i][j].getValeur()==0){
 				this.grille[i][j].getValeursPossibles().add(valeur);
 			}
 		}
@@ -124,7 +124,7 @@ public class Sudoku extends java.util.Observable {
 
 	public void addPossibleValueInRow(int valeur, int i){
 		for(int j=0; j<9; j++){
-			if(!this.grille[i][j].getValeursPossibles().contains(valeur)){
+			if(!this.grille[i][j].getValeursPossibles().contains(valeur)&&this.grille[i][j].getValeur()==0){
 				this.grille[i][j].getValeursPossibles().add(valeur);
 			}
 		}
@@ -135,7 +135,7 @@ public class Sudoku extends java.util.Observable {
 		int j_min = 3*(j/3);
 		for(i=i_min; i<i_min+3;i++){
 			for(j=j_min; j<j_min+3; j++){
-				if(!this.grille[i][j].getValeursPossibles().contains(valeur)){
+				if(!this.grille[i][j].getValeursPossibles().contains(valeur)&&this.grille[i][j].getValeur()==0){
 					this.grille[i][j].getValeursPossibles().add(valeur);
 				}
 			}
