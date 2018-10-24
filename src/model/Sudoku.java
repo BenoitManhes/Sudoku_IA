@@ -7,14 +7,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.PriorityQueue;
 
+import view.ViewSudoku;
+
 public class Sudoku extends java.util.Observable {
 
 	private Case[][] grille; //sudoku taille fixe, pas besoin de constante
+	private static Case[][] grilleInitiale;
 
 	private PriorityQueue<Case> ordreTraitement;
 
 	public Sudoku(File fichier) {
 		this.grille = new Case[9][9];
+		Sudoku.grilleInitiale = new Case[9][9];
 		this.ordreTraitement = new PriorityQueue<Case>(new CaseComparator()); 
 
 		int[][] valeurFichier = this.load(fichier);
@@ -22,8 +26,12 @@ public class Sudoku extends java.util.Observable {
 			for (int j = 0; j < 9; j++) {
 				this.grille[i][j] = new Case(i,j);
 				this.grille[i][j].setValeur(valeurFichier[i][j]);
+				Sudoku.grilleInitiale[i][j] = new Case(i,j);
+				Sudoku.grilleInitiale[i][j].setValeur(valeurFichier[i][j]);
 			}
 		}
+		setChanged();
+		notifyObservers(this.grille);
 		basicForwardChecking();
 		initPriorityQueue();
 	}
@@ -76,8 +84,17 @@ public class Sudoku extends java.util.Observable {
 
 	public void actualize(){
 		// actualisation de la grille au pres de la vue
+		//Case[][] grilleSansValeursInitales = getGrilleSansValeursInitiales(grilleInitiale, grille);
 		setChanged();
-		notifyObservers(grille);
+		notifyObservers(this.grille);
+	}
+	
+	public static boolean isInValeursInitiale(Case caseAnalyse) {
+		
+		if(grilleInitiale[caseAnalyse.getI()][caseAnalyse.getJ()].getValeur() != 0) {
+			return true;
+		}
+		return false;
 	}
 	
 	public void putValeur(int i, int j, int val) {
@@ -197,6 +214,11 @@ public class Sudoku extends java.util.Observable {
 	public PriorityQueue<Case> getOrdreTraitement() {
 		return ordreTraitement;
 	}
+
+	public Case[][] getGrilleInitiale() {
+		return grilleInitiale;
+	}
+
 
 	
 
