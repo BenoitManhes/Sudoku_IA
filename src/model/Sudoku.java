@@ -156,7 +156,7 @@ public class Sudoku extends java.util.Observable {
 		addPossibleValueInSquare(val, i, j);
 	}
 
-	public void deletePossibleValue(int i, int j, int val) {
+	public void deletePossibleValue(int val, int i, int j) {
 		deleteInCol(val,j);
 		deleteInRow(val,i);
 		deleteInSquare(val,i,j);
@@ -174,8 +174,8 @@ public class Sudoku extends java.util.Observable {
 	
 	public boolean isDeletePermitted(int valeur, int i, int j) {
 		if(isEmptyOfPossibleValueInRow(valeur, i) == false 
-				&& isEmptyOfPossibleValueInCol(valeur, j) == false
-				&& isEmptyOfPossibleValueInSquare(valeur, i,j) == false) {
+				|| isEmptyOfPossibleValueInCol(valeur, j) == false
+				|| isEmptyOfPossibleValueInSquare(valeur, i,j) == false) {
 			return true;
 		}
 		return false;
@@ -209,7 +209,7 @@ public class Sudoku extends java.util.Observable {
 		deleteInSquare(valeur, i, j);
 		int i_min = 3*(i/3); 
 		int j_min = 3*(j/3);
-		for(i=i_min; i<i_min+3;i++){
+		for(i=i_min; i<i_min+3; i++){
 			for(j=j_min; j<j_min+3; j++){
 				if(this.grille[i][j].getValeursPossibles().isEmpty()){
 					addPossibleValueInSquare(valeur, i, j);
