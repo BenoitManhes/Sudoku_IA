@@ -173,39 +173,45 @@ public class Sudoku extends java.util.Observable {
 	}
 	
 	public boolean isDeletePermitted(int valeur, int i, int j) {
-		if(isEmptyOfPossibleValueInRow(valeur, i) == false 
-				|| isEmptyOfPossibleValueInCol(valeur, j) == false
-				|| isEmptyOfPossibleValueInSquare(valeur, i,j) == false) {
+		if(isDeletePossibleValueInRow(valeur, i) == false 
+				|| isDeletePossibleValueInCol(valeur, j) == false
+				|| isDeletePossibleValueInSquare(valeur, i,j) == false) {
+			return false;
+		}
+		else {
 			return true;
 		}
-		return false;
 	}
 	
-	public boolean isEmptyOfPossibleValueInRow(int valeur, int i) {
-		deleteInRow(valeur, i);
+	public boolean isDeletePossibleValueInRow(int valeur, int i) {
 		for(int j = 0 ; j<9 ; j++) {
 			if(this.grille[i][j].getValeursPossibles().isEmpty()) {
-				addPossibleValueInRow(valeur, i);
 				return false;
 			}
+			else if(this.grille[i][j].getValeursPossibles().size() == 1) {
+				if(this.grille[i][j].getValeursPossibles().get(0) == valeur) {
+					return false;
+				}
+			}
 		}
-		addPossibleValueInRow(valeur, i);
 		return true;
 	}
 	
-	public boolean isEmptyOfPossibleValueInCol(int valeur, int j) {
-		deleteInCol(valeur, j);
+	public boolean isDeletePossibleValueInCol(int valeur, int j) {
 		for(int i = 0 ; i<9 ; i++) {
 			if(this.grille[i][j].getValeursPossibles().isEmpty()) {
-				addPossibleValueInCol(valeur, j);
 				return false;
 			}
+			else if(this.grille[i][j].getValeursPossibles().size() == 1) {
+				if(this.grille[i][j].getValeursPossibles().get(0) == valeur) {
+					return false;
+				}
+			}
 		}
-		addPossibleValueInCol(valeur, j);
 		return true;
 	}
 	
-	public boolean isEmptyOfPossibleValueInSquare(int valeur, int i, int j) {
+	public boolean isDeletePossibleValueInSquare(int valeur, int i, int j) {
 		deleteInSquare(valeur, i, j);
 		int i_min = 3*(i/3); 
 		int j_min = 3*(j/3);
