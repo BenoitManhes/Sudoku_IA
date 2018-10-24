@@ -81,9 +81,9 @@ public class Sudoku extends java.util.Observable {
 	}
 	
 	public void putValeur(int i, int j, int val) {
-		this.getGrille()[i][j].setValeur(val);
+		this.grille[i][j].setValeur(val);
 		this.actualize();
-		try {Thread.sleep(10);} catch (InterruptedException e) {e.printStackTrace();}
+		try {Thread.sleep(100);} catch (InterruptedException e) {e.printStackTrace();}
 	}
 
 	public void deleteInCol(int valeur, int j){

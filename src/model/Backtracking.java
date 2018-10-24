@@ -8,8 +8,9 @@ public class Backtracking {
 	public static void solve(Sudoku sudoku){
 		// actualisation des valeurs possibles pour chaque cases
 		sudoku.actualize(); 
-
-		backtrack(sudoku,sudoku.getOrdreTraitement());
+		//backtrack(sudoku,sudoku.getOrdreTraitement());
+		backtrack2(sudoku, sudoku.getOrdreTraitement());
+		
 		//sudoku.actualize();
 	}
 
@@ -17,18 +18,18 @@ public class Backtracking {
 
 		// mise a jour des heuristiques pour chaque cases
 		Heuristiques.updateHeuristiques(sudoku);
-		
+
 		boolean solutionTrouve = false;
-		
+
 		PriorityQueue<Case> caseNonTestes = new PriorityQueue<>(caseNoeud);
-		
+
 		while(!caseNoeud.isEmpty() && !solutionTrouve) {
 
 			// choix de la case a traiter selon leurs heuristiques
 			Case c = caseNoeud.poll();
 			int i = c.getI();
 			int j = c.getJ();
-			
+
 			ArrayList<Integer> valeurNonTestes = new ArrayList<Integer>(c.getValeursPossibles());
 			testValPossible(c);
 			while(!valeurNonTestes.isEmpty() && !solutionTrouve) {
@@ -71,6 +72,41 @@ public class Backtracking {
 
 	}
 
+	public static boolean backtrack2(Sudoku sudoku, PriorityQueue<Case> caseNoeud){
+		Heuristiques.updateHeuristiques(sudoku);
+
+		if(caseNoeud.isEmpty())
+		{
+			return true;
+		}
+			
+		Case c = caseNoeud.poll();
+		int i = c.getI();
+		int j = c.getJ();
+		int currentValue = 0;
+		//System.out.println("case ("+i+","+j+") liste value"+c.getValeursPossibles());
+		ArrayList<Integer> copyValPossible = new ArrayList<Integer>(c.getValeursPossibles());
+		for(int value : copyValPossible){
+			currentValue = value;
+			sudoku.putValeur(i, j, value);
+			sudoku.basicForwardChecking();
+			sudoku.arcConsistency();
+			if(backtrack2(sudoku, caseNoeud))
+			{	
+				return true;
+			}
+			sudoku.putValeur(i, j, 0);
+			sudoku.addPossibleValue(i, j, currentValue);
+			sudoku.basicForwardChecking();	
+		}
+		System.out.println("false");
+		caseNoeud.add(c);
+		sudoku.putValeur(i, j, 0);
+		sudoku.addPossibleValue(i, j, currentValue);
+		sudoku.basicForwardChecking();
+		return false;
+	}
+
 	public static Case pollCaseAt(PriorityQueue<Case> queue, int i) {
 		Vector<Case> v = new Vector<>();
 		for (int j = 0; j < i; j++) {
@@ -82,7 +118,7 @@ public class Backtracking {
 		}
 		return caseVoule;
 	}
-	
+
 	public static void testValPossible(Case c) {
 		String str ="Case ("+c.getI()+","+c.getJ()+") val possible : ";
 		for (Integer i : c.getValeursPossibles()) {
