@@ -184,13 +184,15 @@ public class Sudoku extends java.util.Observable {
 	}
 	
 	public boolean isDeletePossibleValueInRow(int valeur, int i) {
+		int compt = 0;
 		for(int j = 0 ; j<9 ; j++) {
 			if(this.grille[i][j].getValeursPossibles().isEmpty()) {
 				return false;
 			}
 			else if(this.grille[i][j].getValeursPossibles().size() == 1) {
 				if(this.grille[i][j].getValeursPossibles().get(0) == valeur) {
-					return false;
+					compt++;
+					if(compt>1) return false;
 				}
 			}
 		}
@@ -198,13 +200,15 @@ public class Sudoku extends java.util.Observable {
 	}
 	
 	public boolean isDeletePossibleValueInCol(int valeur, int j) {
+		int compt = 0;
 		for(int i = 0 ; i<9 ; i++) {
 			if(this.grille[i][j].getValeursPossibles().isEmpty()) {
 				return false;
 			}
 			else if(this.grille[i][j].getValeursPossibles().size() == 1) {
 				if(this.grille[i][j].getValeursPossibles().get(0) == valeur) {
-					return false;
+					compt++;
+					if(compt>1) return false;
 				}
 			}
 		}
@@ -212,18 +216,22 @@ public class Sudoku extends java.util.Observable {
 	}
 	
 	public boolean isDeletePossibleValueInSquare(int valeur, int i, int j) {
-		deleteInSquare(valeur, i, j);
+		int compt = 0;
 		int i_min = 3*(i/3); 
 		int j_min = 3*(j/3);
 		for(i=i_min; i<i_min+3; i++){
 			for(j=j_min; j<j_min+3; j++){
-				if(this.grille[i][j].getValeursPossibles().isEmpty()){
-					addPossibleValueInSquare(valeur, i, j);
+				if(this.grille[i][j].getValeursPossibles().isEmpty()) {
 					return false;
+				}
+				else if(this.grille[i][j].getValeursPossibles().size() == 1) {
+					if(this.grille[i][j].getValeursPossibles().get(0) == valeur) {
+						compt++;
+						if(compt>1) return false;
+					}
 				}
 			}
 		}
-		addPossibleValueInSquare(valeur, i, j);
 		return true;
 	}
 
