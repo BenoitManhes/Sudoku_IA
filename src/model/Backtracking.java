@@ -59,12 +59,12 @@ public class Backtracking {
 				}
 
 			}
-			if(!solutionTrouve) {
+			/*if(!solutionTrouve) {
 				int valeurCase = c.getValeur(); 
 				sudoku.putValeur(i, j, 0); 
 				if(valeurCase!=0) sudoku.addPossibleValue(i, j, valeurCase); 
 				sudoku.basicForwardChecking(); 
-			} 
+			} */
 		}
 
 		return solutionTrouve;
