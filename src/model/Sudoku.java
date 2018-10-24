@@ -100,6 +100,7 @@ public class Sudoku extends java.util.Observable {
 	public void putValeur(int i, int j, int val) {
 		this.getGrille()[i][j].setValeur(val);
 		this.actualize();
+		System.out.println("["+i+","+j+"] <- "+val);
 		try {Thread.sleep(10);} catch (InterruptedException e) {e.printStackTrace();}
 	}
 
