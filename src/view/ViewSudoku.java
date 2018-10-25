@@ -155,6 +155,7 @@ public class ViewSudoku implements java.util.Observer {
 					setCurrentSudoku(new Sudoku(fichierTexte));
 					getCurrentSudoku().addObserver(viewSudoku);
 					getCurrentSudoku().actualisationAffichage();
+					System.out.println("Grille selectionnee : "+fichierTexte.getName());
 				}
 			});
 			menuChoixGrille.add(choixGrille);
@@ -165,8 +166,12 @@ public class ViewSudoku implements java.util.Observer {
 		menuItemSolve = new JMenuItem("Resoudre");
 		menuItemSolve.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Grille: "+listeGrilles[0]);
-				Backtracking.solve(getCurrentSudoku());
+				if(getCurrentSudoku()!=null) {
+					Backtracking.solve(getCurrentSudoku());
+				}
+				else {
+					System.out.println("Aucune grille choisie");
+				}
 			}
 		});
 		menuBar.add(menuItemSolve);
