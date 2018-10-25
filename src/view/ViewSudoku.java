@@ -12,6 +12,7 @@ import java.awt.image.BufferStrategy;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Observable;
 
@@ -35,6 +36,8 @@ public class ViewSudoku implements java.util.Observer {
 	private int HEIGHT = 700;
 	private Case[][] grille = new Case[9][9];
 	private Case[][] grilleInitiale = new Case[9][9];
+	private static Sudoku currentSudoku;
+	public static ViewSudoku viewSudoku;
 
 	private final int UL = (int) (WIDTH/9.1);
 
@@ -111,7 +114,7 @@ public class ViewSudoku implements java.util.Observer {
 		this.render();
 		System.out.println("update");
 	}
-	
+
 	/*public void init(Case[][] grilleInit) {
 		this.grilleInitiale = new CAs;
 	}*/
@@ -124,7 +127,7 @@ public class ViewSudoku implements java.util.Observer {
 
 		JMenuBar menuBar;
 		JMenu menuChoixGrille;
-		JMenuItem menuItemRaz;
+		JMenuItem menuItemSolve;
 
 		//Create the menu bar.
 		menuBar = new JMenuBar();
@@ -134,31 +137,54 @@ public class ViewSudoku implements java.util.Observer {
 		String workingDir = System.getProperty("user.dir");
 		File rep = new File(workingDir+"/bin/resources");
 		File[] fichiersTexte = rep.listFiles(new FilenameFilter(){
-		  public boolean accept(File dir, String name) {
-		    return name.endsWith(".txt");
-		  }
-		});
-		String listeGrilles[] = Arrays.stream(fichiersTexte).map(File::getName).toArray(String[]::new);
-		
-		menuChoixGrille = new JMenu("Choisir une grille");
-		
-		for(int choix = 0 ; choix<listeGrilles.length ; choix++) {
-			JMenuItem choixGrille = new JMenuItem(listeGrilles[choix]);
-			menuChoixGrille.add(choixGrille);
-		}
-		
-		menuBar.add(menuChoixGrille);
-
-		//Remettre a zero la grille
-		menuItemRaz = new JMenuItem("Raz");
-		menuItemRaz.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				System.out.println("Reinitialisation de la grille");
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".txt");
 			}
 		});
-		menuBar.add(menuItemRaz);
+		String listeGrilles[] = Arrays.stream(fichiersTexte).map(File::getName).toArray(String[]::new);
+
+		menuChoixGrille = new JMenu("Choisir une grille");
+
+		for(int choix = 0 ; choix<listeGrilles.length ; choix++) {
+			JMenuItem choixGrille = new JMenuItem(listeGrilles[choix]);
+			File fichierTexte = fichiersTexte[choix];
+			
+			choixGrille.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					setCurrentSudoku(new Sudoku(fichierTexte));
+					getCurrentSudoku().addObserver(viewSudoku);
+					getCurrentSudoku().actualize();
+				}
+			});
+			menuChoixGrille.add(choixGrille);
+		}
+		menuBar.add(menuChoixGrille);
+
+		//Resoudre le Sudoku
+		menuItemSolve = new JMenuItem("Solve");
+		menuItemSolve.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Backtracking.solve(getCurrentSudoku());
+				System.out.println("Resolution de la grille");
+			}
+		});
+		menuBar.add(menuItemSolve);
+
 
 		return menuBar;
+	}
+	
+	public static Sudoku getCurrentSudoku() {
+		return currentSudoku;
+	}
+	public static void setCurrentSudoku(Sudoku currentNewSudoku) {
+		currentSudoku = currentNewSudoku;
+	}
+	public static ViewSudoku getViewSudoku() {
+		return viewSudoku;
+	}
+	public static void setViewSudoku(ViewSudoku newViewSudoku) {
+		viewSudoku = newViewSudoku;
 	}
 
 
