@@ -36,6 +36,7 @@ public class Sudoku extends java.util.Observable {
 		initPriorityQueue();
 	}
 
+
 	/** ================================================ methode de calcul =====================================================================
 	 * @throws FileNotFoundException */
 	public int[][] load(File fichier) {

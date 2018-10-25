@@ -21,15 +21,14 @@ public class Backtracking {
 		}
 		sudoku.basicForwardChecking();*/
 		
-		backtrack2(sudoku, sudoku.getOrdreTraitement());
+		backtrack(sudoku, sudoku.getOrdreTraitement());
 		
 		//sudoku.actualize();
 	}
 
-	public static boolean backtrack2(Sudoku sudoku, PriorityQueue<Case> caseNoeud){
+	
+	public static boolean backtrack(Sudoku sudoku, PriorityQueue<Case> caseNoeud){
 		Heuristiques.updateHeuristiques(sudoku);
-		System.out.println("compteur:"+compteur);
-		compteur++;
 		System.out.println("taille liste caseNoeud : "+caseNoeud.size());
 		if(caseNoeud.isEmpty())
 		{
@@ -56,7 +55,7 @@ public class Backtracking {
 			sudoku.basicForwardChecking();
 			//sudoku.arcConsistency();
 			
-			if(backtrack2(sudoku, caseNoeud))
+			if(backtrack(sudoku, caseNoeud))
 			{	
 				return true;
 			}
