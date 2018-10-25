@@ -167,7 +167,6 @@ public class ViewSudoku implements java.util.Observer {
 		menuItemSolve.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(getCurrentSudoku()!=null) {
-					System.out.println("Grille: "+listeGrilles[0]);
 					Backtracking.solve(getCurrentSudoku());
 				}
 				else {
