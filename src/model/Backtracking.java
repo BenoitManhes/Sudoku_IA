@@ -11,7 +11,7 @@ public class Backtracking {
 		sudoku.actualize(); 
 		//backtrack(sudoku,sudoku.getOrdreTraitement());
 		
-		for (int i = 0; i < 9; i++) {
+		/*for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
 				if(sudoku.getGrille()[i][j].getValeursPossibles().size()==1){
 					sudoku.getGrille()[i][j].setValeur(sudoku.getGrille()[i][j].getValeursPossibles().get(0));
@@ -19,7 +19,7 @@ public class Backtracking {
 				}
 			}
 		}
-		sudoku.basicForwardChecking();
+		sudoku.basicForwardChecking();*/
 		
 		backtrack2(sudoku, sudoku.getOrdreTraitement());
 		
@@ -37,8 +37,7 @@ public class Backtracking {
 			return true;
 		}
 		
-		if(sudoku.bloquer())
-			return false;
+		if(sudoku.bloquer()) return false;
 			
 		Case c = caseNoeud.poll();
 		int i = c.getI();
@@ -46,12 +45,16 @@ public class Backtracking {
 		int currentValue = 0;		
 		System.out.println("noeud "+i+","+j);
 		System.out.println("val possible"+c.getValeursPossibles());
-		ArrayList<Integer> copyValPossible = new ArrayList<Integer>(c.getValeursPossibles());
+		/** Least Constraining Value */
+		//ArrayList<Integer> copyValPossible = new ArrayList<Integer>(c.getValeursPossibles());
+		ArrayList<Integer> copyValPossible = Heuristiques.leastConstrainingValue(sudoku.getGrille(), c);
 		for(int value : copyValPossible){
+			System.out.println("compteur:"+compteur);
+			compteur++;
 			currentValue = value;
 			sudoku.putValeur(i, j, value);
 			sudoku.basicForwardChecking();
-			sudoku.arcConsistency();
+			//sudoku.arcConsistency();
 			
 			if(backtrack2(sudoku, caseNoeud))
 			{	
@@ -60,7 +63,7 @@ public class Backtracking {
 			sudoku.putValeur(i, j, 0);
 			sudoku.addPossibleValue(i, j, currentValue);
 			sudoku.basicForwardChecking();
-			sudoku.arcConsistency();
+			//sudoku.arcConsistency();
 		}
 		c.getValeursPossibles().clear();
 		c.getValeursPossibles().addAll(copyValPossible);
