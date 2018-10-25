@@ -28,7 +28,7 @@ public class Backtracking {
 		//Si il n'y a plus de case a traiter, le sudoku est complete
 		if(caseAtraiter.isEmpty())
 		{
-			System.out.println("Sudoku complete!");
+			System.out.println("Sudoku resolu!\n----------");
 			return true;
 		}
 

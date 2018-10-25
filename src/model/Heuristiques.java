@@ -42,7 +42,7 @@ public class Heuristiques {
 			kCompteur++;
 		}
 		
-		// Trier les valeurs possibles en minimisant leur présence dans les cases adjacentes
+		// Trier les valeurs possibles en minimisant leur presence dans les cases adjacentes
 		for(int k = 0 ; k<compteur.length ; k++) {
 			int max = 0;
 			int indiceMax = 0;
@@ -114,8 +114,5 @@ public class Heuristiques {
 			}
 		}
 		return liste;
-	}
-	
-	
-	
+	}	
 }

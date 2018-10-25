@@ -143,7 +143,7 @@ public class ViewSudoku implements java.util.Observer {
 			}
 		});
 		String listeGrilles[] = Arrays.stream(fichiersTexte).map(File::getName).toArray(String[]::new);
-
+		
 		// Menu du choix de la grille
 		menuChoixGrille = new JMenu("Choisir une grille");
 		for(int choix = 0 ; choix<listeGrilles.length ; choix++) {
@@ -165,8 +165,8 @@ public class ViewSudoku implements java.util.Observer {
 		menuItemSolve = new JMenuItem("Resoudre");
 		menuItemSolve.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				System.out.println("Grille: "+listeGrilles[0]);
 				Backtracking.solve(getCurrentSudoku());
-				System.out.println("Resolution de la grille");
 			}
 		});
 		menuBar.add(menuItemSolve);
