@@ -5,6 +5,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.PriorityQueue;
 
 import view.ViewSudoku;
@@ -14,12 +16,12 @@ public class Sudoku extends java.util.Observable {
 	private Case[][] grille; //sudoku taille fixe, pas besoin de constante
 	private static Case[][] grilleInitiale;
 
-	private PriorityQueue<Case> ordreTraitement;
+	private ArrayList<Case> ordreTraitement;
 
 	public Sudoku(File fichier) {
 		this.grille = new Case[9][9];
 		Sudoku.grilleInitiale = new Case[9][9];
-		this.ordreTraitement = new PriorityQueue<Case>(new CaseComparator()); 
+		this.ordreTraitement = new ArrayList<Case>(); 
 
 		int[][] valeurFichier = this.load(fichier);
 		for (int i = 0; i < 9; i++) {
@@ -30,10 +32,9 @@ public class Sudoku extends java.util.Observable {
 				Sudoku.grilleInitiale[i][j].setValeur(valeurFichier[i][j]);
 			}
 		}
-		setChanged();
-		notifyObservers(this.grille);
+		actualize();
 		basicForwardChecking();
-		initPriorityQueue();
+		initOrdreTraitement();
 	}
 
 	/** ================================================ methode de calcul =====================================================================
@@ -272,19 +273,20 @@ public class Sudoku extends java.util.Observable {
 		return bloc;
 	}
 
-	public void initPriorityQueue() {
+	public void initOrdreTraitement() {
 		for (Case[] cases : this.grille) {
 			for (Case cas : cases) {
 				if(cas.getValeur() == 0) this.ordreTraitement.add(cas);
 			}
 		}
+		Collections.sort(this.ordreTraitement, new CaseComparator());
 	}
 
 	public Case[][] getGrille() {
 		return grille;
 	}
 
-	public PriorityQueue<Case> getOrdreTraitement() {
+	public ArrayList<Case> getOrdreTraitement() {
 		return ordreTraitement;
 	}
 
