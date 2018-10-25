@@ -1,57 +1,74 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 import java.util.Vector;
 
 public class Backtracking {
+	public static int compteur = 0;
 	public static void solve(Sudoku sudoku){
 		// actualisation des valeurs possibles pour chaque cases
 		sudoku.actualize(); 
-
-		backtrack(sudoku, sudoku.getOrdreTraitement());
+		//backtrack(sudoku,sudoku.getOrdreTraitement());
+		
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				if(sudoku.getGrille()[i][j].getValeursPossibles().size()==1){
+					sudoku.getGrille()[i][j].setValeur(sudoku.getGrille()[i][j].getValeursPossibles().get(0));
+					sudoku.getOrdreTraitement().remove(sudoku.getGrille()[i][j]);
+				}
+			}
+		}
+		sudoku.basicForwardChecking();
+		
+		backtrack2(sudoku, sudoku.getOrdreTraitement());
+		
 		//sudoku.actualize();
 	}
 
-	public static boolean backtrack(Sudoku sudoku , PriorityQueue<Case> caseNontestes) {
-
-		// mise a jour des heuristiques pour chaque cases
+	public static boolean backtrack2(Sudoku sudoku, PriorityQueue<Case> caseNoeud){
 		Heuristiques.updateHeuristiques(sudoku);
-
-		boolean solutionTrouve = false;
-		System.out.println(caseNontestes.size());
-		for (int k = 0; k < caseNontestes.size(); k++) {
-
-
-			// choix de la case a traiter selon leurs heuristiques
-			Case c = pollCaseAt(caseNontestes, k);
-			int i = c.getI();
-			int j = c.getJ();
-
-			// a changer pour adapter avec une ArrayList et la methode qui renvoie les valeur possibles
-			PriorityQueue<Integer> valeurNonTestes = new PriorityQueue<>(c.getValeurNonTestes());
-
-			while(!valeurNonTestes.isEmpty() && !solutionTrouve) {
-				// choix de la valeur a teste selon leurs heuristiques
-				int valeur = c.getValeurNonTestes().poll();
-				sudoku.getGrille()[i][j].setValeur(valeur);
-
-				// mise a jour des valeurs possibles pour les cases concernees
-				sudoku.basicForwardChecking();
-				sudoku.arcConsistency();
-
-				if(!sudoku.blocked()) {
-					solutionTrouve = backtrack(sudoku,caseNontestes);					
-				}else {
-					solutionTrouve = true;
-				}
-
-			}
-			caseNontestes.add(c);
+		System.out.println("compteur:"+compteur);
+		compteur++;
+		System.out.println("taille liste caseNoeud : "+caseNoeud.size());
+		if(caseNoeud.isEmpty())
+		{
+			System.out.println("rempli");
+			return true;
 		}
 		
-		return solutionTrouve;
-
-	}
+		if(sudoku.bloquer())
+			return false;
+			
+		Case c = caseNoeud.poll();
+		int i = c.getI();
+		int j = c.getJ();
+		int currentValue = 0;		
+		System.out.println("noeud "+i+","+j);
+		System.out.println("val possible"+c.getValeursPossibles());
+		ArrayList<Integer> copyValPossible = new ArrayList<Integer>(c.getValeursPossibles());
+		for(int value : copyValPossible){
+			currentValue = value;
+			sudoku.putValeur(i, j, value);
+			sudoku.basicForwardChecking();
+			sudoku.arcConsistency();
+			
+			if(backtrack2(sudoku, caseNoeud))
+			{	
+				return true;
+			}
+			sudoku.putValeur(i, j, 0);
+			sudoku.addPossibleValue(i, j, currentValue);
+			sudoku.basicForwardChecking();
+			sudoku.arcConsistency();
+		}
+		c.getValeursPossibles().clear();
+		c.getValeursPossibles().addAll(copyValPossible);
+		System.out.println("false");
+		System.out.println("taille liste caseNoeud : "+caseNoeud.size());
+		caseNoeud.add(c);
+		return false;
+		}
 
 	public static Case pollCaseAt(PriorityQueue<Case> queue, int i) {
 		Vector<Case> v = new Vector<>();
@@ -63,5 +80,13 @@ public class Backtracking {
 			queue.add(case1);
 		}
 		return caseVoule;
+	}
+
+	public static void testValPossible(Case c) {
+		String str ="Case ("+c.getI()+","+c.getJ()+") val possible : ";
+		for (Integer i : c.getValeursPossibles()) {
+			str+=i+", ";
+		}
+		System.out.println(str);
 	}
 }

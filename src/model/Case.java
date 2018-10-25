@@ -12,7 +12,9 @@ public class Case {
 	private int i;	// ligne
 	private int j;	// colonne
 	
-	public Case() {
+	public Case(int a, int b) {
+		this.i = a;
+		this.j = b;
 		this.valeur = 0;
 		this.valeursPossibles = new ArrayList<Integer>();
 		this.valeurNonTestes = new PriorityQueue<Integer>();
