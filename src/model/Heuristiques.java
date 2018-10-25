@@ -42,7 +42,6 @@ public class Heuristiques {
 			kCompteur++;
 		}
 		
-		int valeur = 0;
 		for(int k = 0 ; k<compteur.length ; k++) {
 			int max = 0;
 			int indiceMax = 0;

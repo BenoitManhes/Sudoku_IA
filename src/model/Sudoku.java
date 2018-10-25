@@ -5,21 +5,21 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.PriorityQueue;
-
-import view.ViewSudoku;
 
 public class Sudoku extends java.util.Observable {
 
 	private Case[][] grille; //sudoku taille fixe, pas besoin de constante
 	private static Case[][] grilleInitiale;
 
-	private PriorityQueue<Case> ordreTraitement;
+	private ArrayList<Case> ordreTraitement;
 
 	public Sudoku(File fichier) {
 		this.grille = new Case[9][9];
 		Sudoku.grilleInitiale = new Case[9][9];
-		this.ordreTraitement = new PriorityQueue<Case>(new CaseComparator()); 
+		this.ordreTraitement = new ArrayList<Case>(); 
 
 		int[][] valeurFichier = this.load(fichier);
 		for (int i = 0; i < 9; i++) {
@@ -30,10 +30,9 @@ public class Sudoku extends java.util.Observable {
 				Sudoku.grilleInitiale[i][j].setValeur(valeurFichier[i][j]);
 			}
 		}
-		setChanged();
-		notifyObservers(this.grille);
+		actualize();
 		basicForwardChecking();
-		initPriorityQueue();
+		initOrdreTraitement();
 	}
 
 
@@ -89,15 +88,15 @@ public class Sudoku extends java.util.Observable {
 		setChanged();
 		notifyObservers(this.grille);
 	}
-	
+
 	public static boolean isInValeursInitiale(Case caseAnalyse) {
-		
+
 		if(grilleInitiale[caseAnalyse.getI()][caseAnalyse.getJ()].getValeur() != 0) {
 			return true;
 		}
 		return false;
 	}
-	
+
 	public void putValeur(int i, int j, int val) {
 		this.grille[i][j].setValeur(val);
 		this.actualize();
@@ -180,77 +179,58 @@ public class Sudoku extends java.util.Observable {
 		deleteInSquare(val,i,j);
 	}
 
-	public void arcConsistency(){
-		for (int i = 0; i < 9; i++) {
-			for (int j = 0; j < 9; j++) {
-				if(isDeletePermitted(this.grille[i][j].getValeur(), i, j)) {
-					deletePossibleValue(this.grille[i][j].getValeur(), i, j);
-				}
-			}
-		}
-	}
-	
-	public boolean isDeletePermitted(int valeur, int i, int j) {
-		if(isDeletePossibleValueInRow(valeur, i) == false 
-				|| isDeletePossibleValueInCol(valeur, j) == false
-				|| isDeletePossibleValueInSquare(valeur, i,j) == false) {
+	public boolean arcConsistency(int valeur, int i, int j){
+		if(isDeleteNeeded(valeur, i, j)) {
 			return false;
+			//deletePossibleValue(valeur, i, j);
 		}
-		else {
+		return true;
+	}
+
+	public boolean isDeleteNeeded(int valeur, int i, int j) {
+		if((isDeleteNeededValueInRow(valeur, i, j) == true 
+				|| isDeleteNeededValueInCol(valeur, i, j) == true
+				|| isDeleteNeededValueInSquare(valeur, i,j) == true)) {
 			return true;
 		}
+			return false;
 	}
-	
-	public boolean isDeletePossibleValueInRow(int valeur, int i) {
-		int compt = 0;
-		for(int j = 0 ; j<9 ; j++) {
-			if(this.grille[i][j].getValeursPossibles().isEmpty()) {
-				return false;
-			}
-			else if(this.grille[i][j].getValeursPossibles().size() == 1) {
-				if(this.grille[i][j].getValeursPossibles().get(0) == valeur) {
-					compt++;
-					if(compt>1) return false;
+
+	public boolean isDeleteNeededValueInRow(int valeur, int i, int j) {
+		for(int k = 0 ; k<9 ; k++) {
+			if(this.grille[i][k].getValeursPossibles().size() == 1) {
+				if(this.grille[i][k].getValeursPossibles().get(0) == valeur && k!=j) {
+					return true;
 				}
 			}
 		}
-		return true;
+		return false;
 	}
-	
-	public boolean isDeletePossibleValueInCol(int valeur, int j) {
-		int compt = 0;
-		for(int i = 0 ; i<9 ; i++) {
-			if(this.grille[i][j].getValeursPossibles().isEmpty()) {
-				return false;
-			}
-			else if(this.grille[i][j].getValeursPossibles().size() == 1) {
-				if(this.grille[i][j].getValeursPossibles().get(0) == valeur) {
-					compt++;
-					if(compt>1) return false;
+
+	public boolean isDeleteNeededValueInCol(int valeur, int i, int j) {
+		for(int k = 0 ; k<9 ; k++) {
+			if(this.grille[k][j].getValeursPossibles().size() == 1) {
+				if(this.grille[k][j].getValeursPossibles().get(0) == valeur && k!=i) {
+					return true;
 				}
 			}
 		}
-		return true;
+		return false;
 	}
-	
-	public boolean isDeletePossibleValueInSquare(int valeur, int i, int j) {
-		int compt = 0;
+
+	public boolean isDeleteNeededValueInSquare(int valeur, int i, int j) {
 		int i_min = 3*(i/3); 
 		int j_min = 3*(j/3);
-		for(i=i_min; i<i_min+3; i++){
-			for(j=j_min; j<j_min+3; j++){
-				if(this.grille[i][j].getValeursPossibles().isEmpty()) {
-					return false;
-				}
-				else if(this.grille[i][j].getValeursPossibles().size() == 1) {
-					if(this.grille[i][j].getValeursPossibles().get(0) == valeur) {
-						compt++;
-						if(compt>1) return false;
+		for(int k=i_min; k<i_min+3; k++){
+			for(int l=j_min; l<j_min+3; l++){
+				if(this.grille[k][l].getValeursPossibles().size() == 1) {
+					if(this.grille[k][l].getValeursPossibles().get(0) == valeur && k != i && l != j) {
+						return true;
 					}
 				}
 			}
 		}
-		return true;
+		return false;
 	}
 
 	public boolean finish() {
@@ -273,19 +253,20 @@ public class Sudoku extends java.util.Observable {
 		return bloc;
 	}
 
-	public void initPriorityQueue() {
+	public void initOrdreTraitement() {
 		for (Case[] cases : this.grille) {
 			for (Case cas : cases) {
 				if(cas.getValeur() == 0) this.ordreTraitement.add(cas);
 			}
 		}
+		Collections.sort(this.ordreTraitement, new CaseComparator());
 	}
 
 	public Case[][] getGrille() {
 		return grille;
 	}
 
-	public PriorityQueue<Case> getOrdreTraitement() {
+	public ArrayList<Case> getOrdreTraitement() {
 		return ordreTraitement;
 	}
 
@@ -294,7 +275,7 @@ public class Sudoku extends java.util.Observable {
 	}
 
 
-	
+
 
 
 

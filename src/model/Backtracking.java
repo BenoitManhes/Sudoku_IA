@@ -1,6 +1,8 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.PriorityQueue;
 import java.util.Vector;
 
@@ -11,58 +13,59 @@ public class Backtracking {
 		sudoku.actualize(); 
 		//backtrack(sudoku,sudoku.getOrdreTraitement());
 		
-		/*for (int i = 0; i < 9; i++) {
-			for (int j = 0; j < 9; j++) {
-				if(sudoku.getGrille()[i][j].getValeursPossibles().size()==1){
-					sudoku.getGrille()[i][j].setValeur(sudoku.getGrille()[i][j].getValeursPossibles().get(0));
-					sudoku.getOrdreTraitement().remove(sudoku.getGrille()[i][j]);
+		for (int k = 0; k < 9; k++) {
+			for (int l = 0; l < 9; l++) {
+				if(sudoku.getGrille()[k][l].getValeursPossibles().size()==1){
+					sudoku.getGrille()[k][l].setValeur(sudoku.getGrille()[k][l].getValeursPossibles().get(0));
+					sudoku.getOrdreTraitement().remove(sudoku.getGrille()[k][l]);
 				}
 			}
 		}
-		sudoku.basicForwardChecking();*/
+		sudoku.basicForwardChecking();
 		
+		compteur=0;
 		backtrack(sudoku, sudoku.getOrdreTraitement());
 		
 		//sudoku.actualize();
 	}
 
-	
-	public static boolean backtrack(Sudoku sudoku, PriorityQueue<Case> caseNoeud){
+	public static boolean backtrack(Sudoku sudoku, ArrayList<Case> caseNoeud){
 		Heuristiques.updateHeuristiques(sudoku);
+		Collections.sort(caseNoeud, new CaseComparator());
+		System.out.println("compteur:"+compteur);
 		System.out.println("taille liste caseNoeud : "+caseNoeud.size());
 		if(caseNoeud.isEmpty())
 		{
 			System.out.println("rempli");
 			return true;
 		}
+
 		
-		if(sudoku.bloquer()) return false;
-			
-		Case c = caseNoeud.poll();
+		Case c = caseNoeud.remove(0);
 		int i = c.getI();
-		int j = c.getJ();
-		int currentValue = 0;		
+		int j = c.getJ();		
 		System.out.println("noeud "+i+","+j);
 		System.out.println("val possible"+c.getValeursPossibles());
-		/** Least Constraining Value */
-		//ArrayList<Integer> copyValPossible = new ArrayList<Integer>(c.getValeursPossibles());
 		ArrayList<Integer> copyValPossible = Heuristiques.leastConstrainingValue(sudoku.getGrille(), c);
+		//ArrayList<Integer> copyValPossible = new ArrayList<Integer>(c.getValeursPossibles());
 		for(int value : copyValPossible){
 			System.out.println("compteur:"+compteur);
+			if(sudoku.arcConsistency(value, i, j) == false) {
+				System.out.println("arc consistency faux");
+				continue;
+			}
 			compteur++;
-			currentValue = value;
 			sudoku.putValeur(i, j, value);
 			sudoku.basicForwardChecking();
-			//sudoku.arcConsistency();
 			
 			if(backtrack(sudoku, caseNoeud))
-			{	
+			{
 				return true;
 			}
+			
 			sudoku.putValeur(i, j, 0);
-			sudoku.addPossibleValue(i, j, currentValue);
+			sudoku.addPossibleValue(i, j, value);
 			sudoku.basicForwardChecking();
-			//sudoku.arcConsistency();
 		}
 		c.getValeursPossibles().clear();
 		c.getValeursPossibles().addAll(copyValPossible);
