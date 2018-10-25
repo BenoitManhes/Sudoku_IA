@@ -21,28 +21,25 @@ public class Backtracking {
 				}
 			}
 		}
-		sudoku.basicForwardChecking();*/
+		sudoku.basicForwardChecking();
 		
+		compteur=0;
 		backtrack(sudoku, sudoku.getOrdreTraitement());
 		
 		//sudoku.actualize();
 	}
 
-	public static boolean backtrack2(Sudoku sudoku, ArrayList<Case> caseNoeud){
+	public static boolean backtrack(Sudoku sudoku, ArrayList<Case> caseNoeud){
 		Heuristiques.updateHeuristiques(sudoku);
 		Collections.sort(caseNoeud, new CaseComparator());
 		System.out.println("compteur:"+compteur);
-		compteur++;
 		System.out.println("taille liste caseNoeud : "+caseNoeud.size());
 		if(caseNoeud.isEmpty())
 		{
 			System.out.println("rempli");
 			return true;
 		}
-		
-	/*	if(sudoku.bloquer())
-			return false;
-		*/
+
 		
 		Case c = caseNoeud.remove(0);
 		int i = c.getI();
@@ -60,11 +57,8 @@ public class Backtracking {
 			compteur++;
 			sudoku.putValeur(i, j, value);
 			sudoku.basicForwardChecking();
-			sudoku.arcConsistency();
 			
-			
-			
-			if(backtrack2(sudoku, caseNoeud))
+			if(backtrack(sudoku, caseNoeud))
 			{
 				return true;
 			}
