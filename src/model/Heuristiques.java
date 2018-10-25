@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.Vector;
 
 public class Heuristiques {
@@ -15,39 +16,44 @@ public class Heuristiques {
 		caseAComparer.setPriorityDh(getNombreCasesVidesEnvirons(grille, caseAComparer));
 	}
 	
-	public static int[] leastConstrainingValue(Case[][] grille, Case caseAComparer){
+	public static ArrayList<Integer> leastConstrainingValue(Case[][] grille, Case caseAComparer){
 		
-		int [] listeValeurs = new int[9];
-		for(int i = 1 ; i<=9 ; i++) listeValeurs[i] = i;
-		int [] compteur = new int[9];
+		ArrayList<Integer> listeValeurs = new ArrayList<>();
+		int [] compteur = new int[caseAComparer.getValeursPossibles().size()];
+		int kCompteur = 0;
 		
-		for(int valeurPossible = 1 ; valeurPossible<=9 ; valeurPossible++) {
-			for(int casesVidesLigne = 0 ; casesVidesLigne<getCasesVidesLigne(grille, caseAComparer).size() ; casesVidesLigne++) {
-				if(getCasesVidesLigne(grille, caseAComparer).elementAt(casesVidesLigne).getValeursPossibles().contains(valeurPossible)) {
-					compteur[valeurPossible]++;
+		for(int valeurPossible : caseAComparer.getValeursPossibles()) {
+			for(Case caseVL : getCasesVidesLigne(grille, caseAComparer)) {
+				if(caseVL.getValeursPossibles().contains(valeurPossible)) {
+					compteur[kCompteur]++;
 				}
 			}
-			for(int casesVidesColonne = 0 ; casesVidesColonne<getCasesVidesColonne(grille, caseAComparer).size() ; casesVidesColonne++) {
-				if(getCasesVidesColonne(grille, caseAComparer).elementAt(casesVidesColonne).getValeursPossibles().contains(valeurPossible)) {
-					compteur[valeurPossible]++;
+			for(Case caseVC : getCasesVidesColonne(grille, caseAComparer) ) {
+				if(caseVC.getValeursPossibles().contains(valeurPossible)) {
+					compteur[kCompteur]++;
 				}
 			}
-			for(int casesVidesCarre = 0 ; casesVidesCarre<getCasesVidesCarre(grille, caseAComparer).size() ; casesVidesCarre++) {
-				if(getCasesVidesCarre(grille, caseAComparer).elementAt(casesVidesCarre).getValeursPossibles().contains(valeurPossible)) {
-					compteur[valeurPossible]++;
+			for(Case caseVCarre : getCasesVidesCarre(grille, caseAComparer) ) {
+				if(caseVCarre.getValeursPossibles().contains(valeurPossible)) {
+					compteur[kCompteur]++;
 				}
 			}
+			
+			kCompteur++;
 		}
 		
 		int valeur = 0;
 		for(int k = 0 ; k<compteur.length ; k++) {
-			for(int t = k ; t<compteur.length ; t++) {
-				if(compteur[t]>compteur[k]) {
-					valeur = listeValeurs[t];
-					listeValeurs[t]=listeValeurs[k];
-					listeValeurs[k] = valeur;
+			int max = 0;
+			int indiceMax = 0;
+			for (int i = 0; i < compteur.length; i++) {
+				if(compteur[i]>max) {
+					indiceMax = i;
+					max = compteur[i];
 				}
 			}
+			listeValeurs.add(0, caseAComparer.getValeursPossibles().get(indiceMax));
+			compteur[indiceMax]=-1;
 		}
 		
 		return listeValeurs;
@@ -79,7 +85,7 @@ public class Heuristiques {
 		Vector<Case> liste = new Vector<Case>();
 		int ligne = caseAComparer.getI();
 		for(int j = 0 ; j<grille.length ; j++) {
-			if(grille[ligne][j].getValeur()==0) {
+			if(grille[ligne][j].getValeur()==0 && j!=caseAComparer.getJ()) {
 				liste.add(grille[ligne][j]);
 			}
 		}
@@ -90,7 +96,7 @@ public class Heuristiques {
 		Vector<Case> liste = new Vector<Case>();
 		int colonne = caseAComparer.getJ();
 		for(int i = 0 ; i<grille[1].length ; i++) {
-			if(grille[i][colonne].getValeur()==0) {
+			if(grille[i][colonne].getValeur()==0 && i!=caseAComparer.getJ()) {
 				liste.add(grille[i][colonne]);
 			}
 		}
@@ -103,7 +109,7 @@ public class Heuristiques {
 		int jDebutCarre = 3*(caseAComparer.getJ()/3);
 		for(int i = 0 ; i<3 ; i++) {
 			for(int j = 0 ; j<3 ; j++) {
-				if(grille[iDebutCarre+i][jDebutCarre+j].getValeur()==0 && i!=caseAComparer.getI() && j!=caseAComparer.getJ()) {
+				if(grille[iDebutCarre+i][jDebutCarre+j].getValeur()==0 && i!=caseAComparer.getI() && j!=caseAComparer.getJ() ) {
 					liste.add(grille[iDebutCarre+i][jDebutCarre+j]);
 				}
 			}
