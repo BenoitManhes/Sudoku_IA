@@ -133,12 +133,12 @@ public class Sudoku extends java.util.Observable {
 		//Cette methode supprime les valeurs illegales pour chaque case du plateau
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
-				deletePossibleValue(this.grille[i][j].getValeur(), i, j);
+				deleteIllegalValues(this.grille[i][j].getValeur(), i, j);
 			}
 		}
 	}
 	
-	public void deletePossibleValue(int val, int i, int j) {
+	public void deleteIllegalValues(int val, int i, int j) {
 		//appelee dans la methode precedente : 
 		//Pour une case et une valeur donnee, supprime la valeur de la liste des cases
 		//en contrainte avec cette derniere

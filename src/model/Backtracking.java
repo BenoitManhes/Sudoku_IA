@@ -4,17 +4,30 @@ import java.util.Collections;
 
 public class Backtracking {
 	
+	//Entiers permetant de calculer la performance du backtrack
+	static int nbCasesInitialementVides;
+	static int nbValeursTestees;
+	
 	public static void solve(Sudoku sudoku){
-
+		
 		sudoku.actualisationAffichage(); //Actualisation de l'affichage de la grille
 
 		sudoku.elagageInitial(); //Assignation des valeurs déja determinees (voir description dans classe Sudoku)
 		sudoku.basicForwardChecking(); //Supression des valeurs possibles des cases en fonction des cases assignes
 
+		nbCasesInitialementVides = sudoku.getListeCasesAtraiter().size();
+		nbValeursTestees = 0;
+		
 		//Appel de la fonction de retour sur trace :
 		System.out.println("Resolution en cours...");
 		backtrack(sudoku, sudoku.getListeCasesAtraiter());
-
+		
+		//affichage de la performance de l'algorithme
+		System.out.println("\nPERFORMANCES:");
+		System.out.println("Nb cases initialement vides: " + nbCasesInitialementVides);
+		System.out.println("Nb valeurs testees: "+nbValeursTestees);
+		System.out.println("Indice de performance: "+calculPerformanceBacktrack());
+		System.out.println("------------------");
 	}
 
 	public static boolean backtrack(Sudoku sudoku, ArrayList<Case> caseAtraiter){
@@ -28,7 +41,7 @@ public class Backtracking {
 		//Si il n'y a plus de case a traiter, le sudoku est complete
 		if(caseAtraiter.isEmpty())
 		{
-			System.out.println("Sudoku resolu!\n----------");
+			System.out.println("Sudoku resolu!");
 			return true;
 		}
 
@@ -47,6 +60,7 @@ public class Backtracking {
 			//la valeur est admissible selon l'AC : 
 			//on assigne la valeur puis on actualise les variable legales restantes
 			sudoku.addValueInGrid(i, j, value);
+			nbValeursTestees++; //incrementation du nb de valeurs testes pour le calcul de performance
 			sudoku.basicForwardChecking();
 
 			//Recursivite
@@ -69,4 +83,13 @@ public class Backtracking {
 		caseAtraiter.add(c);
 		return false;
 	}
+	
+	
+	public static float calculPerformanceBacktrack(){
+		//calcul un indice de performance du backtrack : 
+		//rapport du nombre de case initialement vides sur le nombre de valeur assignee au cours du backtrack
+		return (float)nbCasesInitialementVides/(float)nbValeursTestees;
+	
+	}
+	
 }
