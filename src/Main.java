@@ -8,7 +8,7 @@ import view.*;
 public class Main {
 
 	public static void main(String[] args) throws IOException {
-		URL url = Main.class.getResource("/resources/exemple1.txt");
+		URL url = Main.class.getResource("/resources/exemple3.txt");
 		File fichier = new File(url.toString().substring(5));
 		Sudoku sudoku = new Sudoku(fichier);
 		ViewSudoku viewSudoku = new ViewSudoku();
