@@ -6,7 +6,6 @@ import java.util.PriorityQueue;
 public class Case {
 	private int valeur;
 	private ArrayList<Integer> valeursPossibles;
-	private PriorityQueue<Integer> valeurNonTestes;
 	private int priorityMrv;
 	private int priorityDh;
 	private int i;	// ligne
@@ -17,7 +16,6 @@ public class Case {
 		this.j = b;
 		this.valeur = 0;
 		this.valeursPossibles = new ArrayList<Integer>();
-		this.valeurNonTestes = new PriorityQueue<Integer>();
 		for(int k=1; k<=9; k++){
 			this.valeursPossibles.add(k);
 		}
@@ -51,10 +49,6 @@ public class Case {
 	
 	public ArrayList<Integer> getValeursPossibles(){
 		return valeursPossibles;
-	}
-
-	public PriorityQueue<Integer> getValeurNonTestes() {
-		return valeurNonTestes;
 	}
 
 	public int getI() {
