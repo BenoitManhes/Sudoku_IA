@@ -10,15 +10,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferStrategy;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.FilenameFilter;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Observable;
-
-import javax.rmi.ssl.SslRMIClientSocketFactory;
-import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -35,16 +29,18 @@ public class ViewSudoku implements java.util.Observer {
 	private int WIDTH = 700;
 	private int HEIGHT = 700;
 	private Case[][] grille = new Case[9][9];
-	private Case[][] grilleInitiale = new Case[9][9];
 	private static Sudoku currentSudoku;
 	public static ViewSudoku viewSudoku;
-
 	private final int UL = (int) (WIDTH/9.1);
 
+	//=========================================== Creation de la view du Sudoku ====================================================================
+	
 	public ViewSudoku(){
-		//Makes a new window, with the name " Basic game  ".
+		
+		// Construction de la fenetre
 		frame = new JFrame("Sudoku");
-		//this will create the menu
+		
+		// Construction du menu et du panel en fonction
 		JMenuBar menu = createMenu();
 		frame.setJMenuBar(menu);
 		int tailleMenu = menu.getHeight();
@@ -52,25 +48,33 @@ public class ViewSudoku implements java.util.Observer {
 		panel.setPreferredSize(new Dimension(WIDTH, HEIGHT-tailleMenu));
 		panel.setLayout(null);
 
+		// Creation du canvas
 		canvas = new Canvas();
 		canvas.setBounds(0, tailleMenu+2, WIDTH, HEIGHT-tailleMenu);
 		canvas.setIgnoreRepaint(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
-		//this will make the frame not re-sizable
+		
+		// Fenetre not re-sizable
 		frame.setResizable(false);
 		frame.setVisible(true);
-		//this will add the canvas to our frame
+		
+		// Ajouter le canvas a la fenetre
 		panel.add(canvas);
 		panel.isOpaque();
 		panel.repaint();
 		canvas.createBufferStrategy(2);
 		bufferStrategy = canvas.getBufferStrategy();
-		//This will make sure the canvas has focus, so that it can take input from mouse/keyboard
+		
+		// Focus du canvas
 		canvas.requestFocus();
 		canvas.setBackground(java.awt.Color.WHITE);
 		this.render();
 	}
+	
+	
+	//=========================================== Mise a jour de la view du Sudoku ====================================================================
+	
 	void render() {
 		Graphics2D g = (Graphics2D) bufferStrategy.getDrawGraphics();
 		g.clearRect(0, 0, WIDTH, HEIGHT);
@@ -78,6 +82,7 @@ public class ViewSudoku implements java.util.Observer {
 		g.dispose();
 		bufferStrategy.show();
 	}
+	
 	protected void render(Graphics2D g){
 		for (int i = 0; i < grille.length+1; i++) {
 			int epaisseur = UL/12;
@@ -90,6 +95,8 @@ public class ViewSudoku implements java.util.Observer {
 			for (int i = 0; i < grille.length; i++) {
 				for (int j = 0; j < grille.length; j++) {
 					if(grille[j][i].getValeur() != 0) {
+						
+						// Nous differentions ici la grille d'origine et la nouvelle grille creee
 						if(Sudoku.isInValeursInitiale(grille[j][i])) {
 							g.setFont(new Font("Tahoma",Font.BOLD, UL/2));
 							g.setColor(Color.BLACK);
@@ -99,28 +106,23 @@ public class ViewSudoku implements java.util.Observer {
 							g.setColor(Color.GRAY);
 						}
 						g.drawString(grille[j][i].getValeur()+"", i*UL+UL/3, j*UL+UL*3/4);
+						
 					}
 				}
 			}
 		}catch (Exception e) {
-			// TODO: handle exception
 		}
 
 	}
-
 
 	public void update(Observable obs, Object obj) {
 		this.grille = (Case[][]) (obj);
 		this.render();
 	}
 
-	/*public void init(Case[][] grilleInit) {
-		this.grilleInitiale = new CAs;
-	}*/
 
-	public void addController(ActionListener controller){
-
-	}
+	
+	//==================================================== Creation du menu =================================================================================
 
 	public static JMenuBar createMenu() {
 
@@ -132,7 +134,7 @@ public class ViewSudoku implements java.util.Observer {
 		menuBar = new JMenuBar();
 		menuBar.repaint();
 
-		//Rechercher dans les fichiers du workspace avec condition de finir par .txt
+		// Rechercher dans les fichiers du workspace avec condition de finir par .txt
 		String workingDir = System.getProperty("user.dir");
 		File rep = new File(workingDir+"/bin/resources");
 		File[] fichiersTexte = rep.listFiles(new FilenameFilter(){
@@ -142,8 +144,8 @@ public class ViewSudoku implements java.util.Observer {
 		});
 		String listeGrilles[] = Arrays.stream(fichiersTexte).map(File::getName).toArray(String[]::new);
 
+		// Menu du choix de la grille
 		menuChoixGrille = new JMenu("Choisir une grille");
-
 		for(int choix = 0 ; choix<listeGrilles.length ; choix++) {
 			JMenuItem choixGrille = new JMenuItem(listeGrilles[choix]);
 			File fichierTexte = fichiersTexte[choix];
@@ -159,8 +161,8 @@ public class ViewSudoku implements java.util.Observer {
 		}
 		menuBar.add(menuChoixGrille);
 
-		//Resoudre le Sudoku
-		menuItemSolve = new JMenuItem("Solve");
+		// Menu de la resolution du Sudoku
+		menuItemSolve = new JMenuItem("Resoudre");
 		menuItemSolve.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Backtracking.solve(getCurrentSudoku());
@@ -168,7 +170,6 @@ public class ViewSudoku implements java.util.Observer {
 			}
 		});
 		menuBar.add(menuItemSolve);
-
 
 		return menuBar;
 	}

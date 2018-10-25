@@ -5,8 +5,7 @@ import java.util.Vector;
 
 public class Heuristiques {
 	
-	//Les m�thodes suivantes agissent sur les attributs
-	//int priorityMrv, priorityDh et priorityLcv
+	//Les methodes suivantes agissent sur les attributs priorityMrv, priorityDh et priorityLcv
 	
 	public static void minimalRemainingValue(Case caseAComparer){
 		caseAComparer.setPriorityMrv(caseAComparer.getValeursPossibles().size());
@@ -22,6 +21,7 @@ public class Heuristiques {
 		int [] compteur = new int[caseAComparer.getValeursPossibles().size()];
 		int kCompteur = 0;
 		
+		// Pour chaque valeur possible regarder combien d'autres cases adjacentes ont cette valeur possible
 		for(int valeurPossible : caseAComparer.getValeursPossibles()) {
 			for(Case caseVL : getCasesVidesLigne(grille, caseAComparer)) {
 				if(caseVL.getValeursPossibles().contains(valeurPossible)) {
@@ -42,6 +42,7 @@ public class Heuristiques {
 			kCompteur++;
 		}
 		
+		// Trier les valeurs possibles en minimisant leur présence dans les cases adjacentes
 		for(int k = 0 ; k<compteur.length ; k++) {
 			int max = 0;
 			int indiceMax = 0;
@@ -59,9 +60,8 @@ public class Heuristiques {
 	}
 	
 	
-	
+	// Mettre a jour les heuristiques de toutes les cases non nulles
 	public static void updateHeuristiques(Sudoku sudoku) {
-		// mise a jour des heuristiques de toutes les cases non nulles
 		for (int i = 0; i < sudoku.getGrille().length; i++) {
 			for (int j = 0; j < sudoku.getGrille()[i].length; j++) {
 				minimalRemainingValue(sudoku.getGrille()[i][j]);
@@ -71,7 +71,7 @@ public class Heuristiques {
 	}
 	
 	
-	//---------------------------------------------------- Methodes Utiles --------------------------------------------------------------------------------
+	//==================================================== Methodes Utiles ============================================================================
 	
 	
 	private static int getNombreCasesVidesEnvirons(Case[][] grille, Case caseAComparer) {
