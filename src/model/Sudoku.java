@@ -7,32 +7,36 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.PriorityQueue;
 
 public class Sudoku extends java.util.Observable {
 
-	private Case[][] grille; //sudoku taille fixe, pas besoin de constante
+	private Case[][] grille;
 	private static Case[][] grilleInitiale;
+	private ArrayList<Case> listeCasesAtraiter;
 
-	private ArrayList<Case> ordreTraitement;
-
+	//Constructeur a partir d'un fichier 
 	public Sudoku(File fichier) {
 		this.grille = new Case[9][9];
 		Sudoku.grilleInitiale = new Case[9][9];
-		this.ordreTraitement = new ArrayList<Case>(); 
+		this.listeCasesAtraiter = new ArrayList<Case>(); 
 
-		int[][] valeurFichier = this.load(fichier);
+		int[][] valeurFichier = this.load(fichier); //Chargement du fichier
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
+				//On assigne chaque valeur du fichier à la grille en instanciant
+				//des objets cases
 				this.grille[i][j] = new Case(i,j);
 				this.grille[i][j].setValeur(valeurFichier[i][j]);
+				
+				//On fait de meme pour une grille dite Initiale permetant de differencier
+				//les chiffres de bases pour l'affichage
 				Sudoku.grilleInitiale[i][j] = new Case(i,j);
 				Sudoku.grilleInitiale[i][j].setValeur(valeurFichier[i][j]);
 			}
 		}
-		actualize();
-		basicForwardChecking();
-		initOrdreTraitement();
+		actualisationAffichage(); //Actualisation de l'affichage
+		basicForwardChecking(); //On procède a une premiere elimination des valeurs legales restantes
+		initialisationListeCase(); //On initialise la liste des cases a traiter
 	}
 
 
@@ -67,9 +71,7 @@ public class Sudoku extends java.util.Observable {
 				valeur = Character.getNumericValue(ligne.charAt(j));
 				valeurFichier[i][j] = valeur;
 			}
-
 		}
-
 		// Liberation des ressources
 		try {
 			lectureFile.close();
@@ -82,11 +84,15 @@ public class Sudoku extends java.util.Observable {
 		return valeurFichier;
 	}
 
-	public void actualize(){
-		setChanged();
-		notifyObservers(this.grille);
+	public void initialisationListeCase() {
+		for (Case[] cases : this.grille) {
+			for (Case cas : cases) {
+				if(cas.getValeur() == 0) this.listeCasesAtraiter.add(cas);
+			}
+		}
+		Collections.sort(this.listeCasesAtraiter, new CaseComparator());
 	}
-	
+
 	public void elagageInitial(){
 		//Apres l'initialisation de la grille et avant le debut de la resolution, on assigne a toute les cases
 		//qui ne possede qu'une valeur possible ladite valeur.
@@ -94,27 +100,54 @@ public class Sudoku extends java.util.Observable {
 			for (int j = 0; j < 9; j++) {
 				if(this.getGrille()[i][j].getValeursPossibles().size()==1){
 					this.getGrille()[i][j].setValeur(this.getGrille()[i][j].getValeursPossibles().get(0));
-					this.getOrdreTraitement().remove(this.getGrille()[i][j]);
+					this.getListeCasesAtraiter().remove(this.getGrille()[i][j]);
 				}
 			}
 		}
 	}
 
-	public static boolean isInValeursInitiale(Case caseAnalyse) {
+	public void addValueInGrid(int i, int j, int val) {
+		//Methode regroupant l'actualisation d'une valeur, l'affichage et le delai d'attente pour ce dernier.
+		this.grille[i][j].setValeur(val);
+		this.actualisationAffichage();
+		try {Thread.sleep(10);} catch (InterruptedException e) {e.printStackTrace();}
+	}
 
+	/*------------- Fonctions necessaires a l'affichage :-----------------*/
+	
+	public void actualisationAffichage(){
+		setChanged();
+		notifyObservers(this.grille);
+	}
+		
+	public static boolean isInValeursInitiale(Case caseAnalyse) {
 		if(grilleInitiale[caseAnalyse.getI()][caseAnalyse.getJ()].getValeur() != 0) {
 			return true;
 		}
 		return false;
 	}
 
-	public void putValeur(int i, int j, int val) {
-		this.grille[i][j].setValeur(val);
-		this.actualize();
-		try {Thread.sleep(10);} catch (InterruptedException e) {e.printStackTrace();}
+	/*----------- Methodes de suppressions des valeurs illegales dans la grille : ---------*/
+	
+	public void basicForwardChecking(){
+		//Cette methode supprime les valeurs illegales pour chaque case du plateau
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				deletePossibleValue(this.grille[i][j].getValeur(), i, j);
+			}
+		}
 	}
-
-	public void deleteInCol(int valeur, int j){
+	
+	public void deletePossibleValue(int val, int i, int j) {
+		//appelee dans la methode precedente : 
+		//Pour une case et une valeur donnee, supprime la valeur de la liste des cases
+		//en contrainte avec cette derniere
+		deleteInCol(val,j);
+		deleteInRow(val,i);
+		deleteInSquare(val,i,j);
+	}
+	
+	public void deleteInCol(int valeur, int j){ 
 		for(int i=0; i<9; i++){
 			if(this.grille[i][j].getValeursPossibles().contains(valeur)){
 				this.grille[i][j].getValeursPossibles().remove(Integer.valueOf(valeur));
@@ -141,7 +174,17 @@ public class Sudoku extends java.util.Observable {
 			}
 		}
 	}
+	
+	/*----------- Methodes d'ajout des valeurs legales dans la grille : ---------*/
 
+	public void addPossibleValue(int i, int j, int val){
+		//Cette methode permet d'ajouter une valeur comme valeur legale dans la liste des valeurs possibles
+		//des cases en contrainte avec la case(i,j)
+		addPossibleValueInCol(val, j);
+		addPossibleValueInRow(val, i);
+		addPossibleValueInSquare(val, i, j);
+	}
+	
 	public void addPossibleValueInCol(int valeur, int j){
 		for(int i=0; i<9; i++){
 			if(!this.grille[i][j].getValeursPossibles().contains(valeur)&&this.grille[i][j].getValeur()==0){
@@ -170,44 +213,27 @@ public class Sudoku extends java.util.Observable {
 		}
 	}
 
-	public void basicForwardChecking(){
-		for (int i = 0; i < 9; i++) {
-			for (int j = 0; j < 9; j++) {
-				deletePossibleValue(this.grille[i][j].getValeur(), i, j);
-			}
-		}
-	}
-
-	public void addPossibleValue(int i, int j, int val){
-		addPossibleValueInCol(val, j);
-		addPossibleValueInRow(val, i);
-		addPossibleValueInSquare(val, i, j);
-	}
-
-	public void deletePossibleValue(int val, int i, int j) {
-		deleteInCol(val,j);
-		deleteInRow(val,i);
-		deleteInSquare(val,i,j);
-	}
-
+	/*------------ Arc Consistency ---------------*/
+	
 	public boolean arcConsistency(int valeur, int i, int j){
-		if(isDeleteNeeded(valeur, i, j)) {
+		//Cette methode permet de prevoir un eventuel blocage lors de l'agent d'une 
+		//valeur dans la case (i,j). Si elle detecte un conflit elle renvoie false
+		if(isConflictInAC(valeur, i, j)) {
 			return false;
-			//deletePossibleValue(valeur, i, j);
 		}
 		return true;
 	}
 
-	public boolean isDeleteNeeded(int valeur, int i, int j) {
-		if((isDeleteNeededValueInRow(valeur, i, j) == true 
-				|| isDeleteNeededValueInCol(valeur, i, j) == true
-				|| isDeleteNeededValueInSquare(valeur, i,j) == true)) {
+	public boolean isConflictInAC(int valeur, int i, int j) {
+		if((isConflictInRow(valeur, i, j) == true 
+				|| isConflictInCol(valeur, i, j) == true
+				|| isConflictInSquare(valeur, i,j) == true)) {
 			return true;
 		}
 			return false;
 	}
 
-	public boolean isDeleteNeededValueInRow(int valeur, int i, int j) {
+	public boolean isConflictInRow(int valeur, int i, int j) {
 		for(int k = 0 ; k<9 ; k++) {
 			if(this.grille[i][k].getValeursPossibles().size() == 1) {
 				if(this.grille[i][k].getValeursPossibles().get(0) == valeur && k!=j) {
@@ -218,7 +244,7 @@ public class Sudoku extends java.util.Observable {
 		return false;
 	}
 
-	public boolean isDeleteNeededValueInCol(int valeur, int i, int j) {
+	public boolean isConflictInCol(int valeur, int i, int j) {
 		for(int k = 0 ; k<9 ; k++) {
 			if(this.grille[k][j].getValeursPossibles().size() == 1) {
 				if(this.grille[k][j].getValeursPossibles().get(0) == valeur && k!=i) {
@@ -229,7 +255,7 @@ public class Sudoku extends java.util.Observable {
 		return false;
 	}
 
-	public boolean isDeleteNeededValueInSquare(int valeur, int i, int j) {
+	public boolean isConflictInSquare(int valeur, int i, int j) {
 		int i_min = 3*(i/3); 
 		int j_min = 3*(j/3);
 		for(int k=i_min; k<i_min+3; k++){
@@ -244,41 +270,15 @@ public class Sudoku extends java.util.Observable {
 		return false;
 	}
 
-	public boolean finish() {
-		boolean finish = true;
-		for (Case[] cases : grille) {
-			for (Case cas : cases) {
-				if(cas.getValeur() == 0) finish = false;
-			}
-		}
-		return finish;
-	}
 
-	public boolean bloquer() {
-		boolean bloc = false;
-		for (Case[] cases : grille) {
-			for (Case cas : cases) {
-				if(cas.getValeur() == 0 && cas.getValeursPossibles().isEmpty()) bloc = true;
-			}
-		}
-		return bloc;
-	}
-
-	public void initOrdreTraitement() {
-		for (Case[] cases : this.grille) {
-			for (Case cas : cases) {
-				if(cas.getValeur() == 0) this.ordreTraitement.add(cas);
-			}
-		}
-		Collections.sort(this.ordreTraitement, new CaseComparator());
-	}
-
+	/*-----------------Accesseurs et Mutateurs-------------------*/
+	
 	public Case[][] getGrille() {
 		return grille;
 	}
 
-	public ArrayList<Case> getOrdreTraitement() {
-		return ordreTraitement;
+	public ArrayList<Case> getListeCasesAtraiter() {
+		return listeCasesAtraiter;
 	}
 
 	public Case[][] getGrilleInitiale() {

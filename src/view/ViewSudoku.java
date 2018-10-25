@@ -152,7 +152,7 @@ public class ViewSudoku implements java.util.Observer {
 				public void actionPerformed(ActionEvent e) {
 					setCurrentSudoku(new Sudoku(fichierTexte));
 					getCurrentSudoku().addObserver(viewSudoku);
-					getCurrentSudoku().actualize();
+					getCurrentSudoku().actualisationAffichage();
 				}
 			});
 			menuChoixGrille.add(choixGrille);

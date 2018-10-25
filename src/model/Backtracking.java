@@ -6,13 +6,14 @@ public class Backtracking {
 	
 	public static void solve(Sudoku sudoku){
 
-		sudoku.actualize(); //Actualisation de l'affichage de la grille
+		sudoku.actualisationAffichage(); //Actualisation de l'affichage de la grille
 
 		sudoku.elagageInitial(); //Assignation des valeurs déja determinees (voir description dans classe Sudoku)
 		sudoku.basicForwardChecking(); //Supression des valeurs possibles des cases en fonction des cases assignes
 
 		//Appel de la fonction de retour sur trace :
-		backtrack(sudoku, sudoku.getOrdreTraitement());
+		System.out.println("Resolution en cours...");
+		backtrack(sudoku, sudoku.getListeCasesAtraiter());
 
 	}
 
@@ -27,7 +28,7 @@ public class Backtracking {
 		//Si il n'y a plus de case a traiter, le sudoku est complete
 		if(caseAtraiter.isEmpty())
 		{
-			System.out.println("Sudoku complete");
+			System.out.println("Sudoku complete!");
 			return true;
 		}
 
@@ -40,12 +41,12 @@ public class Backtracking {
 		
 		for(int value : valeursPossiblesOrdonnee){
 			//Test de l'Arc Consitency:
-			if(sudoku.arcConsistency(value, i, j) == false) {
+			if(!sudoku.arcConsistency(value, i, j)) {
 				continue;
 			}
 			//la valeur est admissible selon l'AC : 
 			//on assigne la valeur puis on actualise les variable legales restantes
-			sudoku.putValeur(i, j, value);
+			sudoku.addValueInGrid(i, j, value);
 			sudoku.basicForwardChecking();
 
 			//Recursivite
@@ -54,7 +55,7 @@ public class Backtracking {
 				return true;
 			}
 			//Le precedent appel renvoie false : on supprime la valeur de la case
-			sudoku.putValeur(i, j, 0);
+			sudoku.addValueInGrid(i, j, 0);
 			//On rajoute les variables legales restantes precedement supprimees:
 			sudoku.addPossibleValue(i, j, value);
 			sudoku.basicForwardChecking();
