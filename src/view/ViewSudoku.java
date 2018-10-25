@@ -37,7 +37,7 @@ public class ViewSudoku implements java.util.Observer {
 	private Case[][] grille = new Case[9][9];
 	private Case[][] grilleInitiale = new Case[9][9];
 	private static Sudoku currentSudoku;
-	public static ViewSudoku viewSudoku = new ViewSudoku();
+	public static ViewSudoku viewSudoku;
 
 	private final int UL = (int) (WIDTH/9.1);
 
@@ -127,7 +127,6 @@ public class ViewSudoku implements java.util.Observer {
 
 		JMenuBar menuBar;
 		JMenu menuChoixGrille;
-		JMenuItem menuItemRaz;
 		JMenuItem menuItemSolve;
 
 		//Create the menu bar.
@@ -181,11 +180,11 @@ public class ViewSudoku implements java.util.Observer {
 	public static void setCurrentSudoku(Sudoku currentNewSudoku) {
 		currentSudoku = currentNewSudoku;
 	}
-	public ViewSudoku getViewSudoku() {
+	public static ViewSudoku getViewSudoku() {
 		return viewSudoku;
 	}
-	public void setViewSudoku(ViewSudoku newViewSudoku) {
-		this.viewSudoku = newViewSudoku;
+	public static void setViewSudoku(ViewSudoku newViewSudoku) {
+		viewSudoku = newViewSudoku;
 	}
 
 
