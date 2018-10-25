@@ -112,7 +112,6 @@ public class ViewSudoku implements java.util.Observer {
 	public void update(Observable obs, Object obj) {
 		this.grille = (Case[][]) (obj);
 		this.render();
-		System.out.println("update");
 	}
 
 	/*public void init(Case[][] grilleInit) {

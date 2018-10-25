@@ -83,10 +83,21 @@ public class Sudoku extends java.util.Observable {
 	}
 
 	public void actualize(){
-		// actualisation de la grille au pres de la vue
-		//Case[][] grilleSansValeursInitales = getGrilleSansValeursInitiales(grilleInitiale, grille);
 		setChanged();
 		notifyObservers(this.grille);
+	}
+	
+	public void elagageInitial(){
+		//Apres l'initialisation de la grille et avant le debut de la resolution, on assigne a toute les cases
+		//qui ne possede qu'une valeur possible ladite valeur.
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+				if(this.getGrille()[i][j].getValeursPossibles().size()==1){
+					this.getGrille()[i][j].setValeur(this.getGrille()[i][j].getValeursPossibles().get(0));
+					this.getOrdreTraitement().remove(this.getGrille()[i][j]);
+				}
+			}
+		}
 	}
 
 	public static boolean isInValeursInitiale(Case caseAnalyse) {
@@ -273,11 +284,5 @@ public class Sudoku extends java.util.Observable {
 	public Case[][] getGrilleInitiale() {
 		return grilleInitiale;
 	}
-
-
-
-
-
-
 
 }

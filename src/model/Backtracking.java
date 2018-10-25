@@ -1,97 +1,71 @@
 package model;
-
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.PriorityQueue;
-import java.util.Vector;
 
 public class Backtracking {
-	public static int compteur = 0;
+	
 	public static void solve(Sudoku sudoku){
-		// actualisation des valeurs possibles pour chaque cases
-		sudoku.actualize(); 
-		//backtrack(sudoku,sudoku.getOrdreTraitement());
-		
-		for (int k = 0; k < 9; k++) {
-			for (int l = 0; l < 9; l++) {
-				if(sudoku.getGrille()[k][l].getValeursPossibles().size()==1){
-					sudoku.getGrille()[k][l].setValeur(sudoku.getGrille()[k][l].getValeursPossibles().get(0));
-					sudoku.getOrdreTraitement().remove(sudoku.getGrille()[k][l]);
-				}
-			}
-		}
-		sudoku.basicForwardChecking();
-		
-		compteur=0;
+
+		sudoku.actualize(); //Actualisation de l'affichage de la grille
+
+		sudoku.elagageInitial(); //Assignation des valeurs déja determinees (voir description dans classe Sudoku)
+		sudoku.basicForwardChecking(); //Supression des valeurs possibles des cases en fonction des cases assignes
+
+		//Appel de la fonction de retour sur trace :
 		backtrack(sudoku, sudoku.getOrdreTraitement());
-		
-		//sudoku.actualize();
+
 	}
 
-	public static boolean backtrack(Sudoku sudoku, ArrayList<Case> caseNoeud){
-		Heuristiques.updateHeuristiques(sudoku);
-		Collections.sort(caseNoeud, new CaseComparator());
-		System.out.println("compteur:"+compteur);
-		System.out.println("taille liste caseNoeud : "+caseNoeud.size());
-		if(caseNoeud.isEmpty())
+	public static boolean backtrack(Sudoku sudoku, ArrayList<Case> caseAtraiter){
+		
+		//On actualise les valeurs caracteristique des heuristiques de chaque case:
+		Heuristiques.updateHeuristiques(sudoku);  
+		
+		//on trie la liste des valeur a traiter en fonction des valeurs caracteristiques precedemment calculees
+		Collections.sort(caseAtraiter, new CaseComparator()); 
+		
+		//Si il n'y a plus de case a traiter, le sudoku est complete
+		if(caseAtraiter.isEmpty())
 		{
-			System.out.println("rempli");
+			System.out.println("Sudoku complete");
 			return true;
 		}
 
-		
-		Case c = caseNoeud.remove(0);
+		Case c = caseAtraiter.remove(0); //on prend la premiere case de la liste a traiter
 		int i = c.getI();
-		int j = c.getJ();		
-		System.out.println("noeud "+i+","+j);
-		System.out.println("val possible"+c.getValeursPossibles());
-		ArrayList<Integer> copyValPossible = Heuristiques.leastConstrainingValue(sudoku.getGrille(), c);
-		//ArrayList<Integer> copyValPossible = new ArrayList<Integer>(c.getValeursPossibles());
-		for(int value : copyValPossible){
-			System.out.println("compteur:"+compteur);
+		int j = c.getJ();	
+		
+		ArrayList<Integer> valeursPossiblesOrdonnee = Heuristiques.leastConstrainingValue(sudoku.getGrille(), c);
+		//On stocke dans une liste les valeurs possible pour la case selectionnee en fonction de l'heuristique LCV
+		
+		for(int value : valeursPossiblesOrdonnee){
+			//Test de l'Arc Consitency:
 			if(sudoku.arcConsistency(value, i, j) == false) {
-				System.out.println("arc consistency faux");
 				continue;
 			}
-			compteur++;
+			//la valeur est admissible selon l'AC : 
+			//on assigne la valeur puis on actualise les variable legales restantes
 			sudoku.putValeur(i, j, value);
 			sudoku.basicForwardChecking();
-			
-			if(backtrack(sudoku, caseNoeud))
+
+			//Recursivite
+			if(backtrack(sudoku, caseAtraiter))
 			{
 				return true;
 			}
-			
+			//Le precedent appel renvoie false : on supprime la valeur de la case
 			sudoku.putValeur(i, j, 0);
+			//On rajoute les variables legales restantes precedement supprimees:
 			sudoku.addPossibleValue(i, j, value);
 			sudoku.basicForwardChecking();
+			//puis on essaye avec la valeur suivante
 		}
+		//Aucune valeur ne correspond pour ladite case :
+		//On reinitialise la liste des valeurs possibles de la case
 		c.getValeursPossibles().clear();
-		c.getValeursPossibles().addAll(copyValPossible);
-		System.out.println("false");
-		System.out.println("taille liste caseNoeud : "+caseNoeud.size());
-		caseNoeud.add(c);
+		c.getValeursPossibles().addAll(valeursPossiblesOrdonnee);
+		//puis on la rajoute a la liste des cases pour la traiter ulterieurement
+		caseAtraiter.add(c);
 		return false;
-		}
-
-	public static Case pollCaseAt(PriorityQueue<Case> queue, int i) {
-		Vector<Case> v = new Vector<>();
-		for (int j = 0; j < i; j++) {
-			v.add(queue.poll());
-		}
-		Case caseVoule = queue.poll();
-		for (Case case1 : v) {
-			queue.add(case1);
-		}
-		return caseVoule;
-	}
-
-	public static void testValPossible(Case c) {
-		String str ="Case ("+c.getI()+","+c.getJ()+") val possible : ";
-		for (Integer i : c.getValeursPossibles()) {
-			str+=i+", ";
-		}
-		System.out.println(str);
 	}
 }
